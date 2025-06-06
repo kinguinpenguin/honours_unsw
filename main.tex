@@ -1,0 +1,412 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  A small sample UNSW Honours Thesis file.
+%  Any questions to Ian Doust i.doust@unsw.edu.au
+%
+% Edited CSG 11.9.2015, use some of Gery's ideas for front matter; add a conclusion chapter.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  The first part pulls in a UNSW Thesis class file.  This one is
+%  slightly nonstandard and has been set up to do a couple of
+%  things automatically
+%
+ 
+\documentclass[honours,12pt]{unswthesis}
+\linespread{1}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym,amsmath}
+\usepackage{graphicx}
+\usepackage{afterpage}
+\usepackage{natbib}
+\usepackage[colorlinks=true,citecolor=black,linkcolor=black,urlcolor=blue]{hyperref}
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+\usepackage[export]{adjustbox}
+\usepackage{lipsum}
+\usepackage{mathrsfs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  The following are some simple LaTeX macros to give some
+%  commonly used letters in funny fonts. You may need more or less of
+%  these
+%
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\B}{\mathfrak{B}}
+\newcommand{\BB}{\mathcal{B}}
+\newcommand{\M}{\mathfrak{M}}
+\newcommand{\X}{\mathfrak{X}}
+\newcommand{\Y}{\mathfrak{Y}}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\ZZ}{\mathcal{Z}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The following are much more esoteric commands that I have left in
+% so that this file still processes. Use or delete as you see fit
+%
+\newcommand{\bv}[1]{\mbox{BV($#1$)}}
+\newcommand{\comb}[2]{\left(\!\!\!\begin{array}{c}#1\\#2\end{array}\!\!\!\right)
+}
+\newcommand{\Lat}{{\rm Lat}}
+\newcommand{\var}{\mathop{\rm var}}
+\newcommand{\Pt}{{\mathcal P}}
+\def\tr(#1){{\rm trace}(#1)}
+\def\Exp(#1){{\mathbb E}(#1)}
+\def\Exps(#1){{\mathbb E}\sparen(#1)}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\hatt}[1]{\widehat #1}
+\newcommand{\modeq}[3]{#1 \equiv #2 \,(\text{mod}\, #3)}
+\newcommand{\rmod}{\,\mathrm{mod}\,}
+\newcommand{\p}{\hphantom{+}}
+\newcommand{\vect}[1]{\mbox{\boldmath $ #1 $}}
+\newcommand{\reff}[2]{\ref{#1}.\ref{#2}}
+\newcommand{\psum}[2]{\sum_{#1}^{#2}\!\!\!'\,\,}
+\newcommand{\bin}[2]{\left( \begin{array}{@{}c@{}}
+				#1 \\ #2
+			\end{array}\right)	}
+%
+%  Macros - some of these are in plain TeX (gasp!)
+%
+\newcommand{\be}{($\beta$)}
+\newcommand{\eqp}{\mathrel{{=}_p}}
+\newcommand{\ltp}{\mathrel{{\prec}_p}}
+\newcommand{\lep}{\mathrel{{\preceq}_p}}
+\def\brack#1{\left \{ #1 \right \}}
+\def\bul{$\bullet$\ }
+\def\cl{{\rm cl}}
+\let\del=\partial
+\def\enditem{\par\smallskip\noindent}
+\def\implies{\Rightarrow}
+\def\inpr#1,#2{\t \hbox{\langle #1 , #2 \rangle} \t}
+\def\ip<#1,#2>{\langle #1,#2 \rangle}
+\def\lp{\ell^p}
+\def\maxb#1{\max \brack{#1}}
+\def\minb#1{\min \brack{#1}}
+\def\mod#1{\left \vert #1 \right \vert}
+\def\norm#1{\left \Vert #1 \right \Vert}
+\def\paren(#1){\left( #1 \right)}
+\def\qed{\hfill \hbox{$\Box$} \smallskip}
+\def\sbrack#1{\Bigl \{ #1 \Bigr \} }
+\def\ssbrack#1{ \{ #1 \} }
+\def\smod#1{\Bigl \vert #1 \Bigr \vert}
+\def\smmod#1{\bigl \vert #1 \bigr \vert}
+\def\ssmod#1{\vert #1 \vert}
+\def\sspmod#1{\vert\, #1 \, \vert}
+\def\snorm#1{\Bigl \Vert #1 \Bigr \Vert}
+\def\ssnorm#1{\Vert #1 \Vert}
+\def\sparen(#1){\Bigl ( #1 \Bigr )}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% These environments allow you to get nice numbered headings
+%  for your Theorems, Definitions etc.  
+%
+%  Environments
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{notation}[theorem]{Notation}
+\numberwithin{equation}{section}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  If you've got some funny special words that LaTeX might not
+% hyphenate properly, you can give it a helping hand:
+%
+\hyphenation{Mar-cin-kie-wicz Rade-macher}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% OK...Now we get to some actual input.  The first part sets up
+% the title etc that will appear on the front page
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Fractal Analysis in Loop Spaces}
+
+\authornameonly{Fred Flintstone}
+
+\author{\Authornameonly\\{\bigskip}Supervisor: Professor Karl Marx}
+
+\copyrightfalse
+\figurespagefalse
+\tablespagefalse
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  And now the document begins
+%  The \beforepreface and \afterpreface commands puts the
+%  contents page etc in
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\beforepreface
+
+\afterpage{\blankpage}
+
+% plagiarism
+
+\prefacesection{Plagiarism statement}
+
+\vskip 10pc \noindent I declare that this thesis is my
+own work, except where acknowledged, and has not been submitted for
+academic credit elsewhere. 
+
+\vskip 2pc  \noindent I acknowledge that the assessor of this
+thesis may, for the purpose of assessing it:
+\begin{itemize}
+\item Reproduce it and provide a copy to another member of the University; and/or,
+\item Communicate a copy of it to a plagiarism checking service (which may then retain a copy of it on its database for the purpose of future plagiarism checking).
+\end{itemize}
+
+\vskip 2pc \noindent I certify that I have read and understood the University Rules in
+respect of Student Academic Misconduct, and am aware of any potential plagiarism penalties which may 
+apply.\vspace{24pt}
+
+\vskip 2pc \noindent By signing 
+this declaration I am
+agreeing to the statements and conditions above.
+\vskip 2pc \noindent
+Signed: \rule{7cm}{0.25pt} \hfill Date: \rule{4cm}{0.25pt} \newline
+\vskip 1pc
+
+\afterpage{\blankpage}
+
+% Acknowledgements are optional
+
+
+\prefacesection{Acknowledgements}
+
+{\bigskip}By far the greatest thanks must go to my supervisor for
+the guidance, care and support they provided. 
+
+{\bigskip\noindent}Thanks 
+must also go to Emily, Michelle, John and Alex who helped by
+proof-reading the document in the final stages of preparation.
+
+{\bigskip\noindent}Although
+I have not lived with them for a number of years, my family also deserve
+many thanks for their encouragement.
+
+{\bigskip\noindent} Thanks go to Robert Taggart for allowing his thesis
+style to be shamelessly copied.
+
+{\bigskip\bigskip\bigskip\noindent} Fred Flintstone, 2 November 2015.
+
+\afterpage{\blankpage}
+
+% Abstract
+
+\prefacesection{Abstract}
+
+This thesis is a coherent presentation of a quest to generalise three classical
+theorems that were discovered in the 1920s, 1930s and 1940s. Their analogues are
+the product of a conglomeration of ideas that straddle the 1980s and 1990s and
+the application of these new results brings the story into the twenty-first
+century.
+\afterpage{\blankpage}
+
+
+\afterpreface
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Now we can start on the first chapter
+% Within chapters we have sections, sections and so forth
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\afterpage{\blankpage}
+
+\chapter{Exponential-Family Random Graph Models (ERGMs)}\label{s-intro}
+
+Exponential-family random graph models (ERGMs) have become a central framework for modelling the structure of social networks. ERGMs are useful in that they can be specifically designed to capture the effects that variables have on the likelihood of certain patterns within a network. By representing the dependencies between individuals in a network, ERGMs enable the statistical analysis of network processes under a probabilistic framework. \hfill \break \hfill \break
+This section introduces ERGMs, and reviews their applicability to rank-order relational data, as well as their uses for inference when modelling random graphs.
+\section{ERGMs in Networks}
+Networks are a representation of relational data, and show the interactions and connections between individuals. There are a variety of different networks which can be studied, from networks of social contacts, financial networks, collaboration networks, among others. As such, many researchers are interested in examining the factors which affect the structure of these networks, such as why some networks are densely interconnected and why others may be sparse \citep[p.~845]{vanDerPol2018}. \hfill \break \hfill \break
+ERGMs are useful in the study of social networks, as for unknown links between individuals within a network, it allows the probability of a link between two nodes to be dependent on other links inside the network, amongst other variables, whilst also accounting for direct interactions and weighted interactions between nodes. \hfill \break \hfill \break Within the context of this project, ERGMs can be used on incomplete networks with missing or censored information, in order to simulate the possible variations of the missing links in the network, based on the known information and sample data. ERGMs can also be used for hypothesis testing, which opens up the possibility of analysing relational data as well as normal data \citep[p.~846]{vanDerPol2018}. \hfill \break \hfill \break 
+Furthermore, \citet{vanDerPol2018} provides sample code to operationalise and interpret results and analyse goodness of fit, which can be used to trial and error ERGMs in RStudio to find which model maximises the likelihood. This will be helpful to ensure that the ERGM fitted is effective for in-depth analysis and to check for statistical significance.
+\section{Degeneracy and Projectivity}
+Using trial and error to test ERGMs is important to ensure that the ERGM fitted are non-degenerate. Degeneracy generally refers to when ERGMs with subgraph counts do not behave expectedly in terms of sampling and estimation procedures \citep{mukherjee2020degeneracy}. Concerns about the effects near-degeneracy, where near-degenerate ERGMs tend to concentrate probability
+mass on small subsets of graphs, and non-projectivity have on inference have been investigated in other works \citep[p.~632]{schweinberger2020exponential}.\hfill \break \hfill \break
+Consider a subgraph $\textbf{y}_{\mathcal{N}'}$ of a population graph $\textbf{y}_{\mathcal{N}}$, induced by a subset of nodes $\mathcal{N}' \subset \mathcal{N}$. That is, $\textbf{y}_{\mathcal{N}'}$ is the subgraph with the set of nodes $\mathcal{N}'$ and all the edges among nodes in $\mathcal{N}'$ contained in the population graph $\textbf{y}_{\mathcal{N}}$. An ERGM is considered projective if:
+\[\eta(\theta, \mathcal{N}') = \boldsymbol{\theta}~~\text{for all}~~\boldsymbol{\theta} \in \boldsymbol{\Theta}~~\text{and all}~~\mathcal{N}' \subseteq \mathcal{N},\]
+and
+\[\mathbb{P}_{\mathcal{N}',\boldsymbol{\theta}}(\textbf{Y}_{\mathcal{N}'} = \textbf{y}_{\mathcal{N}'}) = \mathbb{P}_{\mathcal{N},\boldsymbol{\theta}}(\textbf{Y}_{\mathcal{N}'} = \textbf{y}_{\mathcal{N}'}, \textbf{Y}_{\mathcal{N}\backslash \mathcal{N}'} \in \mathcal{Y}_{\mathcal{N}\backslash \mathcal{N}'}),\]
+where $\textbf{Y}_{\mathcal{N}\backslash \mathcal{N}'} \in \mathcal{Y}_{\mathcal{N}\backslash \mathcal{N}'}$ denotes the subset of possible edges of the population graph not contained in $\textbf{y}_{\mathcal{N}}.$ That is, the same parameters govern the marginal distributions of all subgraphs of a larger network. \citet{schweinberger2020exponential} concludes that a lack of projectivity can affect non-likelihood-based inference, but is not necessary for likelihood-based-inference.
+\section{Population Inference Scenarios}
+ For the data generating process, \citet{schweinberger2020exponential} defines three broad goals of statistical inference: finite, super and infinite population inference. Finite population inference is concerned with a finite population of nodes and a fixed population graph, super population inference is similar but assumes the population graph was generated by a population property model, and infinite population inference having an infinite population of nodes. \hfill \break \hfill \break They each have different goals: finite aims to estimate functions of the population graphs, such as the total number of edges in the population graph, super aims to estimate the population probability model which generates the possible population graphs, and the infinite aims to estimate the population probability model based on a subgraph induced by a subset of nodes. In all three of these scenarios, the consistency and asymptotic normality results for the likelihood-estimators confirmed that statistical inference for ERGMs is possible, but requires well-posed questions in order for the ERGMs to be well-behaved. \hfill \break \hfill \break This project aims to consider all three of these scenarios within the data generating process, as given an incomplete rank-order network data sample, ERGMs are useful for estimating functions such as the total number of links between individuals, generating possible graphs for the incomplete network, and also estimating the complete network model by simulating on the incomplete network.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Ranked Data and Statistical Methods}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Rank-order relational data, or ordinal relational data, is collected by having each actor in a network rank other actors according to some criterion, as defined by \citet{krivitsky2017exponential}. Rank-order data is notated by a set of $n$ actors, $N$ of which we index as $N = \{A, B, C, \ldots\}.$  Then, each actor $i$ denotes an ordinal relation $\succ_i$ over a set $N$. This relation can represent a multitude of things, such as "preferred to" or "interacted more with", and so on.
+\section{Modelling Framework}
+For two actors (egos) $i$ and $j,$ when asking them to rank some other actors (alters) $k$ and $l$, it's not meaningful to compare how either $i$ or $j$ ranks $k$, but it can be to ask whether $(k \succ_il) = (k \succ_jl).$ That is, ordinal relational data can be used to determine whether $i$ and $j's$ rankings of $k$ and $l$ are concordant, and can tell us something about the network. For example, if both $i$ and $j$ prefer $k$ over $l$, it could suggest that $l$ is less liked among the individuals in the network. The modelling framework utilised from \citet{krivitsky2017exponential} is founded on these districtions.
+\newpage
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{Figures/ordinal_rank_structure.jpg}
+\caption{A simple example of a ranking structure for ordinal relational data from \citet{krivitsky2017exponential}. Here, ego $\textbf{A}$'s rankings of alters $\textbf{B, C}$ and $\textbf{D}$ can be encoded as either a rank matrix by assigning arbitrary ranks of 1, 2 and 3 to $\textbf{B, C}$ and $\textbf{D}$ respectively, or instead as pairwise comparisons implied by $\textbf{A}.$ Note that $\Box$ denotes matrix entries that are unobservable and/or meaningless.}
+\end{figure}
+\hfill \break
+Whilst ERGMs have been used to model internal network structures in a variety of contexts, they tend to pose some issues. When applied to dichotomised rank-order data, that is, the ordinal or ranked preferences have been converted into binary (yes/no, 0/1) ties, the model would inherit the difficulties that come with dichotomising, most notably losing information and introducing biases \citep{goodreau2009birds}. \hfill \break \hfill \break Building on the work of Robins et al. (1999), who was the first to model categorically network data using ERGMs, and Snijders (1996) who applied the stochastic actor-oriented framework to this data, \citet{krivitsky2012exponential} formulated a generalised framework for ERGMs on networks whose ties have values, as well as introducing Markov-chain Monte Carlo (MCMC) methods for simulation and maximum likelihood inference for this general framework.
+\hfill \break \hfill
+The paper also formulated the maximum likelihood inference for this general framework, which will be used to determine which fitted ERGM maximises the likelihood.
+\hfill \break \hfill \break
+\citet{krivitsky2012exponential} formally defined the sample space complete rankings of every actor in a network by every other actor as:
+\[\mathscr{Y} = \left\{\boldsymbol{y}\prime\in \mathbb{S}^{\mathbb{Y}} : \forall_{i \in \mathbb{N}} \; \forall_{r \in \mathbb{S}}\exists \boldsymbol{!}_{j \in N \setminus \{i\}}\boldsymbol{y}\prime_{i,j} = r \right\}.\]
+which is a directed network with no self-loops, whose set of observed relations $\mathbb{Y} = N^{2\neq}$ maps to dyad values $\mathbb{S} = \{1,..n - 1\}$. This also leads to the constraint that an ego must assign a unique rank to each possible alter.
+\hfill \break  \hfill \break
+The probability associated with each network $\boldsymbol{y} \in Y$ in the sample space is given by
+\[\text{Pr}_{\boldsymbol{\theta}; g, \boldsymbol{x}}(\mathbf{Y} = \boldsymbol{y}) =
+\frac{\exp\left\{ \boldsymbol{\theta} \cdot g(\boldsymbol{y}; \boldsymbol{x}) \right\}}{\kappa_{g, \boldsymbol{x}}(\boldsymbol{\theta})}, \quad \boldsymbol{y} \in \mathscr{Y}\]
+with the normalising factor
+\[\kappa_{g, \boldsymbol{x}}(\boldsymbol{\theta}) =
+\sum_{\boldsymbol{y}\prime \in \mathscr{Y}} \exp\left\{ \boldsymbol{\theta} \cdot g(\boldsymbol{y}\prime; \boldsymbol{x}) \right\},\]
+where the sufficient statistic  $\boldsymbol{g(y;x)}$ is a function of network $\boldsymbol{y} \in Y$ that may be also dependent on fixed and known covariates $\boldsymbol{x} \in \mathbb{X}$ \citep[Section 2.3]{krivitsky2017exponential}. The probability is used to define the probability distribution of networks under a given ERGM, and serve as the basis for model estimation (ERGM fitting) and checking goodness of fit. 
+\section{Promotion Statistics}
+Another important concept to discuss is the use of ``promotion" statistics, which in this context means to change statistics or scores within the data structure. For complete ordering data, an ego changing the ranking of one alter will change the ranking of at least one other alter, and an atomic change swaps the rankings of two adjacently ranked alters. 
+\hfill \break \hfill \break
+An atomic change is represented as the effect of having ego $i$ ``promote" a promotable alter $j \in \{k \in N : k \neq i~\wedge~y_{i, k} < n - 1\}$, which represents swapping $j$’s rank with that of the alter previously ranked immediately above $j$. Then, the promotion statistic is defined by \cite{krivitsky2017exponential} as
+\[\Delta_{i,j}^{\nearrow} g(\boldsymbol{y}) \equiv g(\boldsymbol{y}^{i:j\,\mathrlap{\leftrightarrows}\,\phantom{\rightarrow}j^{+}}) - g(\boldsymbol{y}),\]
+where $\boldsymbol{y}^{i:j\,\mathrlap{\overset{\leftarrow}{\rightarrow}}\,\phantom{\rightarrow}j^{+}}$ represents the network $\boldsymbol{y}$ with $i's$ ranking of $j$ and $j^+$, the actor previously ranked immediately above $j$ by $i$ \citep[Section 3.1]{krivitsky2017exponential}. That is, the promotion statistic is defined as the change in $g$ resulting from $i$ ``promoting" $j$ by exactly one rank.
+\section{Nonconformity}
+We also want to define recognised concepts which aid in the analysis of ordinal ranked data. Nonconformity is a measure of the departure from shared or expected ranks. An instance of nonconformity, for example, would be if most egos rank $\textbf{A}$ over $\textbf{B}$, but one ego ranks $\textbf{B}$ over $\textbf{A}$. A natural statistic to summarise the degree of ratings nonconformity is defined by \citet{krivitsky2017exponential} as
+\[g_{GNC}(\boldsymbol{y}) = \sum_{(i, j ,k, l) \in N^{4 \neq}} y_{l:j \succ k}(1 - y_{i:j \succ k}).\]
+The promotion statistic for nonconformity is also given by
+\[\Delta_{i,j}^{\nearrow} g_{GNC}(\boldsymbol{y}) = 2 \sum_{l \in N \setminus \{i,j,j^+\}} (y_{l:j^+ \succ j} - y_{l:j \succ j^+}),\]
+which is derived by observing that when $i$ promotes $j$ over $j^+$, the statistic is incremented by 2 every other ego $l$ who has $j^+$ ranked over $j$, and decremented by 2 for every $l$ who has $j$ ranked over $j^+.$ Most notably, one of the issues with the promotion statistic for nonconformity is that it reliant on adjacent actors.
+\hfill \break \hfill \break
+\citep{krivitsky2017exponential} also defines the statistics for local nonconformity $g_{LNC},$ which unlike global nonconformity $g_{GNC}$, factors in that $i$ may be more likely to conform to those whom they rank highly over those whom they rank lower. The statistic for $g_{LNC}$ is given by
+\[g_{LNC}(\boldsymbol{y}) = \sum_{(i, j, k, l) \in N^{4 \neq}} y_{i:l \succ j} y_{i:l \succ k}y_{l:j \succ k}(1 - y_{i:j \succ k}),\]
+with atomic effects for this statistic given by
+\begin{equation*}
+    \begin{split}
+        \Delta_{i,j}^{\nearrow} g_{LNC}(\boldsymbol{y}) &= \sum_{k \in N \setminus \{i,j,j^+\}} (y_{i:k\succ j^+} y_{k:j^+ \succ j} - y_{i:k \succ j^+} y_{k:j \succ j^+} \\
+        &+ y_{k:i\succ j^+} y_{k:j^+ \succ j} - y_{k:i \succ j} y_{k:j \succ j^+} \\
+        &+ y_{j:k \succ j^+}y_{i:j^+ \succ k} - y_{j^+ : k \succ j} y_{i:j \succ k}).
+    \end{split}
+\end{equation*}
+Similarly, the atomic effects for the statistic problematically only accommodates for swaps that are adjacent. 
+\section{Deference}
+Deference aversion is a measure of the tendency for an ego to not rank others highly if they do not reciprocrate deference. An example of deference aversion would be if an ego $i$ does not rank $l$ above $j$, despite $l$ ranking $i$ below $j$. \citet{krivitsky2017exponential} captures the notion of this statistic with the following:
+\[g_D(\boldsymbol{y}) = \sum_{(i,j, l) \in N^{3 \neq}} y_{l:j\succ i} y_{i:l \succ j},\]
+which is expected to be lower when deference aversion is present. The promotion statistic is defined as:
+\[\Delta^{\nearrow}_{i,j} g_D(\boldsymbol{y}) = 2(y_{j^+ : i \succ j} + y_{j:j^+ \succ i} - 1),\]
+and is similarly to nonconformity reliant on adjacent actors. This makes calculating the promotion statistics for either nonconformity or deference more computationally intensive, as it needs to know which indicators change in between the two actors being swapped. Ideally for the promotion statistics for global or local nonconformity and deference, the promotion statistic formula is changed so that it can minimise the number indicators that change. This would allow us to easily recalculate whenever an atomic change occurs, which would reduce computational costs for the network's data structure. 
+\section{The ``G-Method"}
+The ``G-Method" is a generalized approach to assigning ranks in datasets where observations come from multiple groups or populations (``c" samples), include ordinal, non-numeric, or discrete variables and can also account for tied values.
+\hfill \break \hfill \break
+The ``G-Method” is a series of equations which form a mathematically formal rank assignment system, which systematically assigns ranks to observations in each of the ``c” samples after all the sample observations are pooled and assigned ranks \citep[Section 2]{oyeka2014gmethod}. These ``c” samples are defined as $x_{il}$, which are the $i^{th}$ observation or score in a random sample of size $n_l$ drawn from a population $x_l$, for $i$ = $1, 2, .., n$ and $l = 1, 2, \ldots c$. 
+\hfill \break \hfill \break
+This method is helpful dealing with rank-order relational data which may contain non-numeric ordinal entries, as the “G-Method” allows us to convert these into ranks for data analysis. Since ERGMs require valid rankings, the ``G-method" ensures that the input is well-formed before modelling for statistical analysis. For example, in Section 3, \citet{oyeka2014gmethod} demonstrates the use of the ``G-method" to convert letter grades into ranks for use in data analysis.
+\section{Analysis Methods for Ranked Data}
+Ranked response data, compared to other forms of statistical data, it is unique in that it is deterministic in nature, that is, the rank of the other items in the sample determine the rank of a certain item. 
+\hfill \break \hfill \break \citet{finch2022introduction} provides applicable methodology to the use of libraries in RStudio, as well as RStudio code for the purposes of analysing ranking data, mainly through the statistical modelling of relative ranks, and inference regarding the difference in ranking patterns which may be noticeable between groups or samples.
+\hfill \break \hfill \break 
+An example of the latter is the analysis of fraternity data from \citet{alma9948926770001731}, which modelled the difference in ranking patterns in a group of fraternity students, as it changed over the course of 15 weeks of collected data.
+\hfill \break \hfill \break 
+The libraries and code from \citet{finch2022introduction} will serve as a foundation for the statistical modelling and analysis of rank-order data in this thesis.
+\section{Likelihood Inference}
+Survey methods for gathering social network data tend to result in censored, missing or otherwise incomplete data. For example, the fixed rank nomination (FRN) scheme, which asks participants to nominate and rank a small number of contacts or friends, leaves other relations and their existence uncertain \citep{hoff2013likelihoods}. Problematically, statistical models tend to be formulated in terms of complete observed binary networks, meaning statistical analysis of FRN data with these kinds of models ignores the censored and ranked nature of the data, which can result in misleading statistical inference.
+\hfill \break \hfill \break
+Interestingly, when comparing Bayesian parameter estimates obtained from a likelihood for complete binary networks compared to likelihoods derived from the FRN scheme, they can draw different conclusions from the same data. Binary likelihood can provide misleading inference, especially for model parameters that relate network ties to characteristics of individuals and pairs of individuals \citep[p.~255]{hoff2013likelihoods}.
+\hfill \break \hfill \break
+It is important to not treat missing connections as non-existent, but instead censored, when simulating on partially ranked or incomplete data. An approach similar to the likelihoods derived from the FRN scheme would be useful, as we could treat partially ranked ordinal data as a form of data obtained from a FRN scheme, so that we do not make any assumptions about any of the missing data, and treat non-nominations instead as ranked and censored data instead, rather than absent. For example, we could assume a maximum nomination limit of $m$, and ties not nominated are treated as censored when the limit was reached, and as absent otherwise.
+\hfill \break \hfill \break
+Another important concept for modelling network data using ERGMs is the general convex hull problem. The convex hull of a finite set of points $S = \{p_1, p_2, \ldots, p_n\}$ in $\mathbb{R}^d$, denoted conv($S$), is the smallest convex set that contains all points in $S$. The general convex hull problem is useful when determining whether the estimator of the log-likelihood-ratio has a maximiser \citep{krivitsky2023likelihood}.
+\hfill \break \hfill \break
+\citet{krivitsky2012exponential} also discusses implementations in the widely used ``ergm" package for network modeling, which improve the algorithm for the general convex hull problem algorithm. \citet{krivitsky2012exponential} also discusses implementations in the widely used ergm package for network modeling, which improve the algorithm for solving the general convex hull problem. The general convex hull problem is helpful for calculating the log-likelihood ratio to assess the relative goodness of fit between two ERGMs applied to partially ranked data.
+\hfill \break \hfill \break
+It is important to consider the approach we should take when modelling social networks from sampled data. Most notably, inference for social networks assumes the presence or absence of all possible links is observed and the information is reliable with no measurement error. Naturally, this is not true in practice when it comes to network data collected through sampled surveys, and even if a census of a population is attempted, individuals and their links do not appear in the data.
+\hfill \break \hfill \break
+\citet{handcock2010modeling} suggests that likelihood-based inference from an adaptive network sample (a selection of additional nodes from a partially sampled network) can be conducted using a complete network model. However, it should be based on the available observed data, including the sampling design information. 
+\hfill \break \hfill \break
+That is, for a partially observed network $Y$, we can consider using the face-value likelihood based solely on $Y_{\text{obs}}$, which ignores additional information about $\eta$ available in $D$, where $\eta$ is the natural parameter and $D$ is the $n \times n$ random binary matrix that indicating if the corresponding element of $Y$ was sampled or not \citep[Section~3.2]{handcock2010modeling}. 
+Then, the inference for $\eta$ and $\psi$ should be based on all the available observed data only, and the likelihood is any function of $\eta$ and $\psi$ proportional to $P(D, Y_{\text{obs}}|\eta, \psi)$, where $\psi$ is the probability an individual gets selected at random from sampling.
+\hfill \break \hfill \break
+Such an approach gives some insight on a general likelihood framework for network inference for when the full network is not observed, and can be applied to partial rankings, as well as unobserved or unranked connections. Since partially ranked data isn’t random, it is crucial that we consider the sampling mechanism, so that we can base our likelihood inference on it. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Sampling, Privacy, and Representativeness}\label{cha}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+When dealing social networks, certain factors can affect the inference and consequently the conclusions drawn from a network. This section focuses on discussing how different methods of sampling, missing data and privacy can affect inference.
+\section{Protecting the Privacy of Sampled Individuals}
+When analysing synthetic networks, networks that mimics the statistical properties of a real social network, it is necessary to protect the privacy of individual relationships captured by the social network. An proposed approach to satisfy this, would be a randomized response scheme for perturbing the edges and non-edges of the network, to generate a collection of synthetic edges whilst satisfying DP to control the risk \citep[Section~3.1]{karwa2017sharing}. The Differential Privacy (DP) framework is designed to capture the worst-case risk of releasing sensitive data \citep{dwork2006calibrating}. 
+\hfill \break \hfill \break
+Edge differential privacy (EDP) is a measure of the worst-case disclosure risk of identifying any relationship, which is represented by edges, between entities, represented by nodes \citep[Section~3.2]{karwa2017sharing}. To generate synthetic networks under $\epsilon$-edge differential privacy, \citet{karwa2017sharing} proposes a simple randomised response mechanism. For any two neighbouring networks $x$ and $x^{\prime}$, the EDP bounds the worst-case ratio of the likelihoods of $Y$ conditionally on $x$ and $x^{\prime}.$ That is, $P_{\gamma}(Y = y~|~X = x)$ is $\epsilon$-edge differentially private if and only if
+\[
+\max_{y} \max_{\substack{x, x': \Delta(x, x') = 1}} 
+\log \left\{ \frac{P_{\gamma}(Y = y \mid X = x)}{P_{\gamma}(Y = y \mid X = x')} \right\} \leq \epsilon,
+\]
+where $P_\gamma(Y = y~|~X = x)$ denotes a family of conditional probability distributions, $x$ is the network that requires privacy protection, $Y$ is the random synthetic network obtained by sampling, and $\gamma$ is a vector paraemeter of the privacy mechanism controlling the generation of $Y$ from $x$. To find the maximum likelihood estimate (MLE) of $\boldsymbol{\theta}$, we apply the Monte Carlo maximum likelihood estimator \citep[Section~5]{karwa2017sharing}. The application and usefulness of these techniques are demonstrated in a case study using a version of the Enron e-mail corpus data set \citep{krivitsky2023tale}.
+\section{Generalisability of Network Sampling}
+It would be helpful for our project to have a way to test whether a model is generalisable, that is, whether it can be applied to different datasets to simulate incomplete data. Generalisability is important as an indicator for whether a model for simulating incomplete data is overfitted.
+\hfill \break \hfill \break
+\citet{krivitsky2023tale} focuses on a case study between two samples of small networks of within-household contacts in Belgium, which were collected using two different but complementary sampling designs. The first sample was smaller, but with all contacts in each household observed, and the other sample is larger and more representative but recording contacts of only one person per household. 
+\hfill \break \hfill \break
+The paper aims to combine their strengths to learn the social forces that shape household contact formation. By doing so, it enables simulation for prediction of disease spread, while generalising to the population of households in the region. To accomplish this, they describe a flexible framework for specifying multi-network models in the ERGM class, and identify the requirements for inference and prediction under this framework to be consistent, identifiable and generalisable, for both complete or incomplete data. For each fitted model, they simulate multiple networks using estimated parameters and compare simulated network statistics to the observed ones.
+We are most interested in the framework’s goal of evaluating model stability across structurally similar, but contextually different networks. 
+\hfill \break \hfill \break
+\citet{krivitsky2023tale} aims to find a model which is generalisable, that is, a model can be fitted to another dataset and can reproduce its structure, it is more generalisable. If a model fitted to dataset A poorly reproduces the data structure of dataset B, it signals that the model has limited generalisability. We aim to use their framework, whose implementation is published in the R package \texttt{ergm.multi}, to determine whether a given ERGM can be applied to multiple datasets to simulate partial data.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clearpage
+\bibliographystyle{agsm}
+\bibliography{MyRefs}
+
+
+
+
+\end{document}
+
+
+
+
+
