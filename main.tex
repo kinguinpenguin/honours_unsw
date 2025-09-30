@@ -393,8 +393,22 @@ We are most interested in the framework’s goal of evaluating model stability a
 \chapter{Optimising the Infrastructure of \texttt{ergm.rank}}\label{cha}
 The main goal of this thesis is to be able to, given an observed ranking, we want a statistical model that explains this ranking, as well as being able to simulate changes that could have happened to the rankings, as well as simulate new rankings being added. Ideally, we aim to simulate networks with up to 100 individuals. However, this proves to be a problem in time complexity, as the functions which simulate changes to the network for deference and local or global nonconformity, namely $\texttt{c\_deference}$, $\texttt{c\_nonconformity}$ and $\texttt{c\_localAND\_nonconformity}$ respectively. There are also some other functions which were changed, but these functions were the main offenders for simulation, each with a time complexity of $\mathcal{O}(n^3).$
 \hfill \break \hfill \break
-In order to account for these issues, a new auxiliary structure was devised and created for each network structure. In the original functionality of $\texttt{ergm.rank},$ the only auxiliary structure was $\texttt{sm},$ which was a matrix of values which represented the rank each ego gave to an alter. For example, $\texttt{sm[i][j] = 4}$ means that the ego $i$ gave the alter $j$ a ranking of $4.$ As a result, when recalculating statistics such as deference and nonconformity, it would be necessary for $ergm.rank$ to iterate over every individual in a network like so (put a diagram showing it iterates over the entire thing)
-
+In order to account for these issues, a new auxiliary structure was devised and created for each network structure. In the original functionality of $\texttt{ergm.rank},$ the only auxiliary structure was $\texttt{sm},$ which was a matrix of values which represented the rank each ego gave to an alter. For example, $\texttt{sm[i][j] = 4}$ means that the ego $i$ gave the alter $j$ a ranking of $4.$ As a result, when recalculating statistics such as deference and nonconformity, it would be necessary for $\texttt{ergm.rank}$ to iterate over every individual in a network.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/iterate_ego_closer.jpg}
+\caption{When recalculating statistics such as deference and local or global nonconformity, $\texttt{ergm.rank}$ currently iterates over every alter $j$ for each ego $i$ in the network.}
+\end{figure}
+\hfill \break
+The new auxiliary structure for implemented for $\texttt{ergm.rank}$, called $\texttt{udsm},$ is instead a matrix of structures which keep track of which alter is immediately above it and which alter is immediately below it.
+\newpage
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{Figures/struct_box_diagram up_down.jpg}
+\caption{A visual representation of the struct created for \texttt{udsm}.}
+\end{figure}
+\hfill \break
+For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j] = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since in most cases it would only be necessary to iterate between two rankings when recalculating statistics, as suggested by the formulas in Chapter 2. Excluding ties, on average it would be expected to cut computational time by two-thirds (i think ask pavel tomorrow), because (reason ask him).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
