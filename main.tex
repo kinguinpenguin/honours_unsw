@@ -408,7 +408,15 @@ The new auxiliary structure for implemented for $\texttt{ergm.rank}$, called $\t
 \caption{A visual representation of the struct created for \texttt{udsm}.}
 \end{figure}
 \hfill \break
-For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j] = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since in most cases it would only be necessary to iterate between two rankings when recalculating statistics, as suggested by the formulas in Chapter 2. Excluding ties, on average it would be expected to cut computational time by two-thirds (i think ask pavel tomorrow), because (reason ask him).
+For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j] = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since it would only be necessary to iterate between two rankings when recalculating statistics, as evident in the formulas from Chapter 2. 
+\hfill \break \hfill \break
+Suppose we arbitrarily choose 2 points on a line uniformly. On average, the distance between these points would be a third of the length of the line. As such, it's expected that iterating only between the old value which $i$ ranked $j$ and the new value that $i$ ranked $j$, the time complexity would be cut by two-thirds.
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{Figures/udsm.pdf}
+\caption{Consider an ego $i$ and their rankings of alters $a, b$ and $c.$ Then, if \texttt{sm[i][a]} were changed, using \texttt{udsm} we can iterate either up or down to the new value of \texttt{sm[i][a]}, allowing us to easily recalculate statistics such as nonconformity without iterating over individuals who were not affected by the change.}
+\end{figure}
+\hfill \break
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
