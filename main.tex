@@ -391,7 +391,10 @@ We are most interested in the framework’s goal of evaluating model stability a
 \hfill \break \hfill \break
 \citet{krivitsky2023tale} aims to find a model which is generalisable, that is, a model can be fitted to another dataset and can reproduce its structure, it is more generalisable. If a model fitted to dataset A poorly reproduces the data structure of dataset B, it signals that the model has limited generalisability. We aim to use their framework, whose implementation is published in the R package \texttt{ergm.multi}, to determine whether a given ERGM can be applied to multiple datasets to simulate partial data.
 \chapter{Optimising the Infrastructure of \texttt{ergm.rank}}\label{cha}
-The main goal of this thesis is to be able to, given an observed ranking, we want a statistical model that explains this ranking, as well as being able to simulate changes that could have happened to the rankings, as well as simulate new rankings being added. Ideally, we aim to simulate networks with up to 100 individuals. However, this proves to be a problem in time complexity, as the functions which simulate changes to the network for deference and local or global nonconformity, namely $\texttt{c\_deference}$, $\texttt{c\_nonconformity}$ and $\texttt{c\_localAND\_nonconformity}$ respectively. There are also some other functions which were changed, but these functions were the main offenders for simulation, each with a time complexity of $\mathcal{O}(n^3).$
+Our main goal is to be able to, given an observed ranking, we want a statistical model that explains this ranking, as well as being able to simulate changes that could have happened to the rankings, as well as simulate new rankings being added.
+\section{Dealing with
+Computational Time Issues}
+Ideally, we aim to simulate networks with up to 100 individuals. However, this proves to be a problem in time complexity, as the functions which simulate changes to the network for deference and local or global nonconformity, namely $\texttt{c\_deference}$, $\texttt{c\_nonconformity}$ and $\texttt{c\_localAND\_nonconformity}$ respectively. There are also some other functions which were changed, but these functions were the main offenders for simulation, each with a time complexity of $\mathcal{O}(n^3).$
 \hfill \break \hfill \break
 In order to account for these issues, a new auxiliary structure was devised and created for each network structure. In the original functionality of $\texttt{ergm.rank},$ the only auxiliary structure was $\texttt{sm},$ which was a matrix of values which represented the rank each ego gave to an alter. For example, $\texttt{sm[i][j] = 4}$ means that the ego $i$ gave the alter $j$ a ranking of $4.$ As a result, when recalculating statistics such as deference and nonconformity, it would be necessary for $\texttt{ergm.rank}$ to iterate over every individual in a network.
 \begin{figure}[h]
@@ -414,9 +417,12 @@ Suppose we arbitrarily choose 2 points on a line uniformly. On average, the dist
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{Figures/udsm.pdf}
-\caption{Consider an ego $i$ and their rankings of alters $a, b$ and $c.$ Then, if \texttt{sm[i][a]} were changed, using \texttt{udsm} we can iterate either up or down to the new value of \texttt{sm[i][a]}, allowing us to easily recalculate statistics such as nonconformity without iterating over individuals who were not affected by the change.}
+\caption{Consider an ego $i$ and their rankings of alters $a, b$ and $c.$ Then, if \texttt{sm[i][a]} were changed, using \texttt{udsm} we can start at the original value for \texttt{sm[i][a]} and iterate either up or down to the new value of \texttt{sm[i][a]}, allowing us to easily recalculate statistics such as nonconformity without iterating over individuals who were not affected by the change.}
 \end{figure}
-\hfill \break
+\section{Proposals}
+ERGMs use Markov chain Monte Carlo (MCMC) in order to simulate networks from the model, as well as estimate the parameters by comparing simulated and observed statistics. This MCMC relies on proposals, which specify a mechanism for generating a small random change to the current network to explore the sample space. 
+\hfill \break \hfill \break
+In \citet{krivitsky2017exponential}, they use a Metropolis sampling algorithm (Algorithm A1) which chooses and ego at random, and makes a proposal to switch the ranking of two of its alters. Algorithm A1, however, is designed for sampling from a complete rank ERGM, which makes the assumption that each ego provides a complete, strict ordering of all alters in the network. As such, it is important for us to design an algorithm to propose changes to a partially ranked network.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
