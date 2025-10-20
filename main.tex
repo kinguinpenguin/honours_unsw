@@ -422,7 +422,11 @@ Suppose we arbitrarily choose 2 points on a line uniformly. On average, the dist
 \section{Proposals}
 ERGMs use Markov chain Monte Carlo (MCMC) in order to simulate networks from the model, as well as estimate the parameters by comparing simulated and observed statistics. This MCMC relies on proposals, which specify a mechanism for generating a small random change to the current network to explore the sample space. 
 \hfill \break \hfill \break
-In \citet{krivitsky2017exponential}, they use a Metropolis sampling algorithm (Algorithm A1) which chooses and ego at random, and makes a proposal to switch the ranking of two of its alters. Algorithm A1, however, is designed for sampling from a complete rank ERGM, which makes the assumption that each ego provides a complete, strict ordering of all alters in the network. As such, it is important for us to design an algorithm to propose changes to a partially ranked network.
+\citet{krivitsky2017exponential} uses a Metropolis sampling algorithm (Algorithm A1) which chooses and ego at random, and makes a proposal to switch the ranking of two of its alters. Algorithm A1, however, is designed for sampling from a complete rank ERGM, which makes the assumption that each ego provides a complete, strict ordering of all alters in the network. As such, it is important for us to design an algorithm to propose changes to both a complete and a partially ranked network, as well as these changes being as small as possible for efficiency.
+\hfill \break \hfill \break
+A complete rank ERGM assumes that each ego provides a strict ordering of all alters with no ties and no omissions. Consequently, in the case of a complete ordering, the distribution of the orderings is that of a permutation of alters by the egos. As such, the smallest move we can make in a complete ordering is have an ego swap an adjacent pair of alters.
+\hfill \break \hfill \break
+Comparatively, a partially ranked ERGM is encoded to account for ties and missing rankings when generating a proposal. This is accomplished by giving each alter a rating from 1 to $n - 1$, where $n$ is the number of individuals in the network, so that the distribution instead is the egos assigning repeatable values in that range to alters. In this case, the smallest move we can make in a partial ordering is either incrementing or decrementing the rating of an alter by an ego.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
