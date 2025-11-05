@@ -443,7 +443,8 @@ We accept the proposal if for $U \sim \text{Unif}(0, 1)$ we have $U \leq \alpha 
 Now, consider the edge-state for an altar rated the maximum or minimum by an ego ($n$ and $1$ respectively). Because we can’t increment/decrement beyond the edges, the proposal distribution becomes asymmetric. So, the probability for $q(y | y^*)$ and $q(y^* | y)$ would not be the same, as for a proposed state $y^* = \text{max} - 1$, the probability of $q(y^* | y) = 1$, whereas the probability of $q(y | y^*) = 0.5$ since at $y^* = \text{max} - 1$ the edge-state can increment up or down.
 \hfill \break \hfill \break
 This is similarly the case for the minimum, $y = 1$, and so in both cases we have that \[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{0.5}{1} = \log \frac{1}{2}.\] Similarly, for the edge-states where an altar is rated one above the minimum or one below the maximum, the probability would be flipped, and we'd instead have
-\[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{1}{0.5} = -\log \frac{1}{2}.\] For any other edge-state, the move probabilities are symmetric, so the proposal log-ratio is \[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{0.5}{0.5} = 0.\] That is, the log acceptance probability changes when an alter is ranked either on or next to the maximum or minimum by an ego.
+\[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{1}{0.5} = -\log \frac{1}{2}.\] For any other edge-state, the move probabilities are symmetric, so the proposal log-ratio is \[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{0.5}{0.5} = 0.\] That is, the log acceptance probability changes when an alter is ranked either on or next to the maximum or minimum by an ego, and has been accounted for in the proposal to swap adjacently ranked alters.
+\chapter{Implementation and Evaluation using \texttt{ergm.rank}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
