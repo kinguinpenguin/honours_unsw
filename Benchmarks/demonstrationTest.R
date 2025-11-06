@@ -12,7 +12,7 @@ library(ergm.rank)
 data("newcomb")
 fit_true <- list()
 fit_constrained <- list()
-for (week in 1:15) {
+for (week in 1:5) {
   cat(sprintf("Week %d\n", week))
   Y_full <- newcomb[[week]]
   rank_matrix <- as.matrix(Y_full, attrname = "descrank")
@@ -63,37 +63,36 @@ for (week in 1:15) {
   fit_constrained[[week]] <- fit2
 }
 
-# Create an empty data frame to store comparisons
-compare_df <- data.frame(
-  week = 1:15,
-  coef_true = NA,
-  coef_constrained = NA,
-  se_true = NA,
-  se_constrained = NA,
-  logLik_true = NA,
-  logLik_constrained = NA
-)
+compare_list <- list()
 
-# Loop through all 15 models
-for (i in 1:15) {
-  # Check that both fits exist and are valid ergm objects
+for (i in 1:5) {
   if (inherits(fit_true[[i]], "ergm") && inherits(fit_constrained[[i]], "ergm")) {
-    # Coefficients
-    compare_df$coef_true[i] <- coef(fit_true[[i]])
-    compare_df$coef_constrained[i] <- coef(fit_constrained[[i]])
+    # Extract coefficients and SEs
+    coefs_true <- coef(fit_true[[i]])
+    coefs_constrained <- coef(fit_constrained[[i]])
 
-    # Standard errors
-    compare_df$se_true[i] <- sqrt(diag(vcov(fit_true[[i]])))
-    compare_df$se_constrained[i] <- sqrt(diag(vcov(fit_constrained[[i]])))
+    se_true <- sqrt(diag(vcov(fit_true[[i]])))
+    se_constrained <- sqrt(diag(vcov(fit_constrained[[i]])))
 
     # Log-likelihoods
-    compare_df$logLik_true[i] <- as.numeric(logLik(fit_true[[i]]))
-    compare_df$logLik_constrained[i] <- as.numeric(logLik(fit_constrained[[i]]))
-  } else {
-    # If one failed, mark NA
-    compare_df[i, 2:7] <- NA
+    logLik_true <- as.numeric(logLik(fit_true[[i]]))
+    logLik_constrained <- as.numeric(logLik(fit_constrained[[i]]))
+
+    # Combine into a data frame (one row per parameter × model type)
+    df_week <- data.frame(
+      week = i,
+      term = rep(names(coefs_true), 2),
+      model_type = rep(c("true", "constrained"), each = length(coefs_true)),
+      estimate = c(coefs_true, coefs_constrained),
+      se = c(se_true, se_constrained),
+      logLik = rep(c(logLik_true, logLik_constrained), each = length(coefs_true))
+    )
+
+    compare_list[[i]] <- df_week
   }
 }
+
+compare_df <- do.call(rbind, compare_list)
 
 # Print to console
 print(compare_df)
@@ -105,3 +104,39 @@ end_time <- Sys.time()
 total_time <- as.numeric(difftime(end_time, start_time, units = "secs"))
 cat("\nTotal computational time:", round(total_time, 2), "seconds\n",
     file = "tests/demonstration_results.txt", append = TRUE)
+
+install.packages("ggplot2")
+library(ggplot2)
+
+# Compute confidence interval bounds
+compare_df$lower <- compare_df$estimate - compare_df$se
+compare_df$upper <- compare_df$estimate + compare_df$se
+compare_df$week <- factor(compare_df$week)
+
+# Get unique features (terms)
+terms <- unique(compare_df$term)
+
+# Loop over each feature and plot separately
+for (t in terms) {
+  df_sub <- subset(compare_df, term == t)
+  
+  p <- ggplot(df_sub, aes(x = week, y = estimate, color = model_type, group = model_type)) +
+    geom_line(size = 1) +
+    geom_point(size = 2) +
+    geom_ribbon(aes(ymin = lower, ymax = upper, fill = model_type), alpha = 0.2, color = NA) +
+    theme_minimal(base_size = 14) +
+    labs(
+      title = paste("Parameter estimates over time:", t),
+      x = "Week",
+      y = "Estimate",
+      color = "Model type",
+      fill = "Model type"
+    )
+  
+  # Display in RStudio
+  print(p)
+  
+  # Save each plot as its own file
+  filename <- paste0("tests/coef_trajectories_", t, ".png")
+  ggsave(filename, p, width = 10, height = 6, dpi = 300)
+}
