@@ -338,11 +338,19 @@ The ``G-Method” is a series of equations which form a mathematically formal ra
 This method is helpful dealing with rank-order relational data which may contain non-numeric ordinal entries, as the “G-Method” allows us to convert these into ranks for data analysis. Since ERGMs require valid rankings, the ``G-method" ensures that the input is well-formed before modelling for statistical analysis. For example, in Section 3, \citet{oyeka2014gmethod} demonstrates the use of the ``G-method" to convert letter grades into ranks for use in data analysis.
 \section{Analysis Methods for Ranked Data}
 Ranked response data, compared to other forms of statistical data, it is unique in that it is deterministic in nature, that is, the rank of the other items in the sample determine the rank of a certain item. 
-\hfill \break \hfill \break \citet{finch2022introduction} provides applicable methodology to the use of libraries in RStudio, as well as RStudio code for the purposes of analysing ranking data, mainly through the statistical modelling of relative ranks, and inference regarding the difference in ranking patterns which may be noticeable between groups or samples.
+\hfill \break \hfill \break \citet{finch2022introduction} provides applicable methodology to the use of libraries in R, as well as R code for the purposes of analysing ranking data, mainly through the statistical modelling of relative ranks, and inference regarding the difference in ranking patterns which may be noticeable between groups or samples.
 \hfill \break \hfill \break 
 An example of the latter is the analysis of fraternity data from \citet{alma9948926770001731}, which modelled the difference in ranking patterns in a group of fraternity students, as it changed over the course of 15 weeks of collected data.
 \hfill \break \hfill \break 
 The libraries and code from \citet{finch2022introduction} will serve as a foundation for the statistical modelling and analysis of rank-order data in this thesis.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Sampling, Privacy, and Representativeness}\label{cha}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+When dealing social networks, certain factors can affect the inference and consequently the conclusions drawn from a network. This section focuses on discussing how different methods of sampling and missing data can affect inference.
 \section{Likelihood Inference}
 Survey methods for gathering social network data tend to result in censored, missing or otherwise incomplete data. For example, the fixed rank nomination (FRN) scheme, which asks participants to nominate and rank a small number of contacts or friends, leaves other relations and their existence uncertain \citep{hoff2013likelihoods}. Problematically, statistical models tend to be formulated in terms of complete observed binary networks, meaning statistical analysis of FRN data with these kinds of models ignores the censored and ranked nature of the data, which can result in misleading statistical inference.
 \hfill \break \hfill \break
@@ -362,24 +370,8 @@ That is, for a partially observed network $Y$, we can consider using the face-va
 Then, the inference for $\eta$ and $\psi$ should be based on all the available observed data only, and the likelihood is any function of $\eta$ and $\psi$ proportional to $P(D, Y_{\text{obs}}|\eta, \psi)$, where $\psi$ is the probability an individual gets selected at random from sampling.
 \hfill \break \hfill \break
 Such an approach gives some insight on a general likelihood framework for network inference for when the full network is not observed, and can be applied to partial rankings, as well as unobserved or unranked connections. Since partially ranked data isn’t random, it is crucial that we consider the sampling mechanism, so that we can base our likelihood inference on it. 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Sampling, Privacy, and Representativeness}\label{cha}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-When dealing social networks, certain factors can affect the inference and consequently the conclusions drawn from a network. This section focuses on discussing how different methods of sampling, missing data and privacy can affect inference.
 \section{Protecting the Privacy of Sampled Individuals}
-When analysing synthetic networks, networks that mimics the statistical properties of a real social network, it is necessary to protect the privacy of individual relationships captured by the social network. An proposed approach to satisfy this, would be a randomized response scheme for perturbing the edges and non-edges of the network, to generate a collection of synthetic edges whilst satisfying DP to control the risk \citep[Section~3.1]{karwa2017sharing}. The Differential Privacy (DP) framework is designed to capture the worst-case risk of releasing sensitive data \citep{dwork2006calibrating}. 
-\hfill \break \hfill \break
-Edge differential privacy (EDP) is a measure of the worst-case disclosure risk of identifying any relationship, which is represented by edges, between entities, represented by nodes \citep[Section~3.2]{karwa2017sharing}. To generate synthetic networks under $\epsilon$-edge differential privacy, \citet{karwa2017sharing} proposes a simple randomised response mechanism. For any two neighbouring networks $x$ and $x^{\prime}$, the EDP bounds the worst-case ratio of the likelihoods of $Y$ conditionally on $x$ and $x^{\prime}.$ That is, $P_{\gamma}(Y = y~|~X = x)$ is $\epsilon$-edge differentially private if and only if
-\[
-\max_{y} \max_{\substack{x, x': \Delta(x, x') = 1}} 
-\log \left\{ \frac{P_{\gamma}(Y = y \mid X = x)}{P_{\gamma}(Y = y \mid X = x')} \right\} \leq \epsilon,
-\]
-where $P_\gamma(Y = y~|~X = x)$ denotes a family of conditional probability distributions, $x$ is the network that requires privacy protection, $Y$ is the random synthetic network obtained by sampling, and $\gamma$ is a vector paraemeter of the privacy mechanism controlling the generation of $Y$ from $x$. To find the maximum likelihood estimate (MLE) of $\boldsymbol{\theta}$, we apply the Monte Carlo maximum likelihood estimator \citep[Section~5]{karwa2017sharing}. The application and usefulness of these techniques are demonstrated in a case study using a version of the Enron e-mail corpus data set \citep{krivitsky2023tale}.
+When analysing synthetic networks, networks that mimics the statistical properties of a real social network, it is important to consider how to protect the privacy of individual relationships captured by the social network. An proposed approach to satisfy this, would be a randomized response scheme for perturbing the edges and non-edges of the network, to generate a collection of synthetic edges whilst satisfying DP to control the risk \citep[Section~3.1]{karwa2017sharing}. The Differential Privacy (DP) framework is designed to capture the worst-case risk of releasing sensitive data \citep{dwork2006calibrating}. Although privacy is an important consideration within the context of networks, it is not necessary in this project as the datasets used (such as the Newcomb and Michigan studies) are historical, publicly available, and used primarily for simulation and methodological evaluation.
 \section{Generalisability of Network Sampling}
 It would be helpful for our project to have a way to test whether a model is generalisable, that is, whether it can be applied to different datasets to simulate incomplete data. Generalisability is important as an indicator for whether a model for simulating incomplete data is overfitted.
 \hfill \break \hfill \break
@@ -389,8 +381,10 @@ The paper aims to combine their strengths to learn the social forces that shape 
 We are most interested in the framework’s goal of evaluating model stability across structurally similar, but contextually different networks. 
 \hfill \break \hfill \break
 \citet{krivitsky2023tale} aims to find a model which is generalisable, that is, a model can be fitted to another dataset and can reproduce its structure, it is more generalisable. If a model fitted to dataset A poorly reproduces the data structure of dataset B, it signals that the model has limited generalisability. We aim to use their framework, whose implementation is published in the R package \texttt{ergm.multi}, to determine whether a given ERGM can be applied to multiple datasets to simulate partial data.
-\chapter{Optimising the Infrastructure of \texttt{ergm.rank}}\label{cha}
-Our main goal is to be able to, given an observed ranking, we want a statistical model that explains this ranking, as well as being able to simulate changes that could have happened to the rankings, as well as simulate new rankings being added.
+\chapter{Optimising the Estimation of Ranked ERGMs}\label{cha}
+Our main goal is to be able to, given an observed ranking, we want a statistical
+model that explains this ranking, as well as being able to simulate changes that could
+have happened to the rankings, as well as simulate new rankings being added. 
 \section{Dealing with
 Computational Time Issues}
 Ideally, we aim to simulate networks with up to 100 individuals. However, this proves to be a problem in time complexity, as the functions which simulate changes to the network for deference and local or global nonconformity, namely $\texttt{c\_deference}$, $\texttt{c\_nonconformity}$ and $\texttt{c\_localAND\_nonconformity}$ respectively. There are also some other functions which were changed, but these functions were the main offenders for simulation, each with a time complexity of $\mathcal{O}(n^3).$
@@ -418,6 +412,8 @@ Suppose we arbitrarily choose 2 points on a line uniformly. On average, the dist
 \includegraphics[width=1\textwidth]{Figures/udsm.pdf}
 \caption{Consider an ego $i$ and their rankings of alters $a, b$ and $c.$ Then, if \texttt{sm[i][a]} were changed, using \texttt{udsm} we can start at the original value for \texttt{sm[i][a]} and iterate either up or down to the new value of \texttt{sm[i][a]}, allowing us to easily recalculate statistics such as nonconformity without iterating over individuals who were not affected by the change.}
 \end{figure}
+\hfill \break
+By tracking adjacently ranked alters, this auxiliary structure allows us to make use of promotion statistics (discussed in Chapter 2) when recalculating metrics such as deference and nonconformity. In turn, this enables the network's proposals to be re-designed as more efficient small-step proposal moves, so that $\texttt{ergm.rank}$ can be reasonably applied to larger networks without egregious computational times.
 \section{Proposals}
 ERGMs use Markov chain Monte Carlo (MCMC) in order to simulate networks from the model, as well as estimate the parameters by comparing simulated and observed statistics. This MCMC relies on proposals, which specify a mechanism for generating a small random change to the current network to explore the sample space. 
 \hfill \break \hfill \break
@@ -445,6 +441,11 @@ Now, consider the edge-state for an altar rated the maximum or minimum by an ego
 This is similarly the case for the minimum, $y = 1$, and so in both cases we have that \[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{0.5}{1} = \log \frac{1}{2}.\] Similarly, for the edge-states where an altar is rated one above the minimum or one below the maximum, the probability would be flipped, and we'd instead have
 \[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{1}{0.5} = -\log \frac{1}{2}.\] For any other edge-state, the move probabilities are symmetric, so the proposal log-ratio is \[\log \frac{q(y | y^*)}{q(y^* | y)} = \log \frac{0.5}{0.5} = 0.\] That is, the log acceptance probability changes when an alter is ranked either on or next to the maximum or minimum by an ego, and has been accounted for in the proposal to swap adjacently ranked alters.
 \chapter{Implementation and Evaluation using \texttt{ergm.rank}}
+Using the new auxiliary structure, we apply the framework to larger networks to benchmark computation time. We also evaluate whether the redesigned proposal mechanism produces accurate MLE estimates on partially observed networks, compared to MLE estimates obtained from the full network.
+\section{Dataset and Network Structure}
+The Newcomb Fraternity Data \citep{Newcomb1961-yh} is a classic dataset used in social network and psychology research. Conducted by Theodore M. Newcomb at the University of Michigan, it was focused on exploring how individuals' preferences and social interactions evolve in a new group setting over time.
+\hfill \break \hfill \break
+The dataset consists of fifteen, \(17 \times 17\) matrices which recorded the sociometric preference rankings from 17 men across 15 weeks. Each week, participants would rank the other 16 men from best friend, down to least friend. Due to its small and fully observed nature, the Newcomb dataset has been widely studied, and in this project serves as a benchmark for testing the time complexity and accuracy of fitted missing data MLEs using the newly implemented infrastructure for $\texttt{ergm.rank}.$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
