@@ -12,7 +12,7 @@ library(ergm.rank)
 data("newcomb")
 fit_true <- list()
 fit_constrained <- list()
-for (week in 1:5) {
+for (week in 1:15) {
   cat(sprintf("Week %d\n", week))
   Y_full <- newcomb[[week]]
   rank_matrix <- as.matrix(Y_full, attrname = "descrank")
@@ -65,7 +65,7 @@ for (week in 1:5) {
 
 compare_list <- list()
 
-for (i in 1:5) {
+for (i in 1:15) {
   if (inherits(fit_true[[i]], "ergm") && inherits(fit_constrained[[i]], "ergm")) {
     # Extract coefficients and SEs
     coefs_true <- coef(fit_true[[i]])
@@ -82,7 +82,7 @@ for (i in 1:5) {
     df_week <- data.frame(
       week = i,
       term = rep(names(coefs_true), 2),
-      model_type = rep(c("true", "constrained"), each = length(coefs_true)),
+      model_type = rep(c("Complete", "Top 5"), each = length(coefs_true)),
       estimate = c(coefs_true, coefs_constrained),
       se = c(se_true, se_constrained),
       logLik = rep(c(logLik_true, logLik_constrained), each = length(coefs_true))
@@ -116,27 +116,26 @@ compare_df$week <- factor(compare_df$week)
 # Get unique features (terms)
 terms <- unique(compare_df$term)
 
-# Loop over each feature and plot separately
-for (t in terms) {
-  df_sub <- subset(compare_df, term == t)
-  
-  p <- ggplot(df_sub, aes(x = week, y = estimate, color = model_type, group = model_type)) +
-    geom_line(size = 1) +
-    geom_point(size = 2) +
-    geom_ribbon(aes(ymin = lower, ymax = upper, fill = model_type), alpha = 0.2, color = NA) +
-    theme_minimal(base_size = 14) +
-    labs(
-      title = paste("Parameter estimates over time:", t),
-      x = "Week",
-      y = "Estimate",
-      color = "Model type",
-      fill = "Model type"
-    )
-  
-  # Display in RStudio
-  print(p)
-  
-  # Save each plot as its own file
-  filename <- paste0("tests/coef_trajectories_", t, ".png")
-  ggsave(filename, p, width = 10, height = 6, dpi = 300)
-}
+library(ggplot2)
+
+p <- ggplot(compare_df, aes(x = week, y = estimate,
+                            color = model_type, group = model_type)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  geom_ribbon(aes(ymin = lower, ymax = upper, fill = model_type),
+              alpha = 0.2, color = NA) +
+  facet_wrap(~ term, ncol = 1, scales = "free_y") + 
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Parameter estimates over time",
+    x = "Week",
+    y = "Estimate",
+    color = "Model type",
+    fill = "Model type"
+  )
+
+print(p)
+
+# Save stacked version
+ggsave("tests/coef_trajectories_stacked.png",
+       p, width = 10, height = 14, dpi = 300)
