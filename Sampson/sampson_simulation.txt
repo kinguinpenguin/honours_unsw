@@ -1,40 +1,40 @@
                         week                   term      estimate          se
-deference                  1              deference -0.0946796274 0.029588600
-nonconformity              1          nonconformity -0.0036987492 0.003346719
-nonconformity.localAND     1 nonconformity.localAND  0.0052417515 0.010125062
-deference1                 2              deference -0.0706513330 0.027538260
-nonconformity1             2          nonconformity -0.0043515816 0.003516108
-nonconformity.localAND1    2 nonconformity.localAND  0.0048421910 0.010539881
-deference2                 3              deference -0.0335792360 0.026884722
-nonconformity2             3          nonconformity -0.0035022609 0.003771473
-nonconformity.localAND2    3 nonconformity.localAND -0.0004465434 0.010452044
-deference3                 1              deference -0.0249359622 0.026056321
-nonconformity3             1          nonconformity -0.0008876601 0.003874164
-nonconformity.localAND3    1 nonconformity.localAND -0.0088186345 0.010627429
-deference4                 2              deference -0.0449911680 0.026278935
-nonconformity4             2          nonconformity  0.0004925276 0.004007056
-nonconformity.localAND4    2 nonconformity.localAND -0.0136867575 0.010831548
-deference5                 3              deference -0.0206554107 0.025968226
-nonconformity5             3          nonconformity  0.0053750273 0.004695450
-nonconformity.localAND5    3 nonconformity.localAND -0.0198880059 0.010784516
+deference                  1              deference -0.0142314752 0.026442501
+nonconformity              1          nonconformity -0.0060126005 0.003736007
+nonconformity.localAND     1 nonconformity.localAND  0.0084129197 0.010906404
+deference1                 2              deference -0.0571473003 0.027589947
+nonconformity1             2          nonconformity -0.0030934851 0.003605891
+nonconformity.localAND1    2 nonconformity.localAND -0.0015052705 0.010366013
+deference2                 3              deference -0.0239847089 0.025511599
+nonconformity2             3          nonconformity  0.0047054288 0.004758709
+nonconformity.localAND2    3 nonconformity.localAND -0.0179808630 0.011195172
+deference3                 1              deference -0.0340371830 0.026498424
+nonconformity3             1          nonconformity  0.0018752181 0.004411793
+nonconformity.localAND3    1 nonconformity.localAND -0.0105004709 0.010940101
+deference4                 2              deference -0.0334034426 0.026367275
+nonconformity4             2          nonconformity -0.0004922564 0.003720668
+nonconformity.localAND4    2 nonconformity.localAND -0.0149488969 0.010332873
+deference5                 3              deference -0.0179363343 0.024329013
+nonconformity5             3          nonconformity  0.0047231203 0.004482479
+nonconformity.localAND5    3 nonconformity.localAND -0.0240094292 0.010802293
                           logLik
-deference               7.193263
-nonconformity           7.193263
-nonconformity.localAND  7.193263
-deference1              4.970304
-nonconformity1          4.970304
-nonconformity.localAND1 4.970304
-deference2              1.808019
-nonconformity2          1.808019
-nonconformity.localAND2 1.808019
-deference3              1.589401
-nonconformity3          1.589401
-nonconformity.localAND3 1.589401
-deference4              3.302248
-nonconformity4          3.302248
-nonconformity.localAND4 3.302248
-deference5              2.021232
-nonconformity5          2.021232
-nonconformity.localAND5 2.021232
+deference               1.683906
+nonconformity           1.683906
+nonconformity.localAND  1.683906
+deference1              4.023597
+nonconformity1          4.023597
+nonconformity.localAND1 4.023597
+deference2              1.772926
+nonconformity2          1.772926
+nonconformity.localAND2 1.772926
+deference3              1.277261
+nonconformity3          1.277261
+nonconformity.localAND3 1.277261
+deference4              4.122326
+nonconformity4          4.122326
+nonconformity.localAND4 4.122326
+deference5              2.841822
+nonconformity5          2.841822
+nonconformity.localAND5 2.841822
 
-Total computational time: 154.08 seconds
+Total computational time: 2656.81 seconds
