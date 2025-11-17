@@ -21,7 +21,7 @@ for (i in 1:6) {
   nw_ranked <- complete_ordering(nw, "score")
   
   # Ranking matrix matches the completed network
-  rank_mat <- as.matrix(nw_ranked, attrname = "score")
+  rank_mat <- as.matrix(nw, attrname = "score")
   
   fit <- ergm(
     nw_ranked ~ rank.deference + rank.nonconformity("all") + rank.nonconformity("localAND"),
