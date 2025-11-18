@@ -557,6 +557,14 @@ Evidently, The parameter estimates of the liking relation reflect the divide whi
 Unfortunately, attempts to fit ERGMs to the three disliking networks (\texttt{sampdlk1}, \texttt{sampdlk2}, \texttt{sampdlk3}) were less successful. While \texttt{sampdlk1} converged to a reasonable MLE, \texttt{sampdlk2} and \texttt{sampdlk3} had extremely long run times and did not reach convergence within feasible computational limits. This issue underscores the challenges faced when fitting MLEs to sparse partial rankings. When so little information is available, parameter estimation is unstable and is prohibitively slow to converge. 
 \hfill \break \hfill \break
 Since the disliking relations were collected retrospectively, after the conflict had already unfolded, it is likely that these rankings were less reliable compared to the liking data. Retrospective recall, especially for negative relations, tends to introduce noise, resulting in less coherent structural patterns for the ERGMs to capture. As a result, the ERGMs for disliking relations lacked consistent structural patterns for parameter estimation, yielding a poorfly defined likelihood and preventing the algorithm from converging to an MLE. Future works could look into improving the infrastructure to successfully fit these datasets, or simply more powerful hardware to reduce run times. We can, however, examine the results from fitting \texttt{sampdlk1} and compare them to the corresponding liking network at the same time point, \texttt{samplk1}.
+\hfill \break \hfill \break
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{Sampson/dislikeness_statistics.png}
+\caption{Parameter estimates over time for deference, global nonconformity and local+global nonconformity for the dislikeness relation only for Time Point 1 due to issues when fitting the MLE.}
+\end{figure} 
+\hfill \break \hfill \break
+Interestingly, skibid
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 \bibliographystyle{agsm}
