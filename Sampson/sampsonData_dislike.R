@@ -111,7 +111,7 @@ dislike_df$upper <- dislike_df$estimate + dislike_df$se
 dislike_df$week  <- factor(dislike_df$week)
 
 
-### ---- FIXED PLOTTING FUNCTION (NO model_type) ---- ###
+### ---- PLOTTING FUNCTION ---- ###
 
 plot_estimates <- function(df, title) {
   ggplot(df, aes(x = week, y = estimate)) +
