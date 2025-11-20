@@ -14,6 +14,8 @@
 \documentclass[honours,12pt]{unswthesis}
 \linespread{1}
 \usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
@@ -408,16 +410,13 @@ The proposed auxiliary structure for $\texttt{ergm.rank}$, called $\texttt{udsm}
 \includegraphics[width=0.5\textwidth]{Figures/struct_box_diagram up_down.jpg}
 \caption{A visual representation of the struct created for \texttt{udsm}.}
 \end{figure}
-\hfill \break
-For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j].up = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since it would only be necessary to iterate between two rankings when recalculating statistics, as evident in the formulas from Chapter 2. 
-\hfill \break \hfill \break
-Suppose we arbitrarily choose 2 points on a line uniformly. On average, the distance between these points would be a third of the length of the line. As such, it's expected that when iterating only between the old value which $i$ ranked $j$ and the new value that $i$ ranked $j$, the time complexity would be cut by two-thirds.
 \begin{figure}
 \centering
 \includegraphics[width=1\textwidth]{Figures/udsm.pdf}
 \caption{Consider an ego $i$ and their rankings of alters $a, b$ and $c.$ Then, if \texttt{sm[i][a]} were changed, using \texttt{udsm} we can start at the original value for \texttt{sm[i][a]} and iterate either up or down to the new value of \texttt{sm[i][a]}, allowing us to easily recalculate statistical measures without iterating over individuals who were not affected by the change. \texttt{udsm[i][a].down = 0} implies that there is no alter ranked by $i$ below $a$.}
-\end{figure}
-\hfill \break
+\end{figure} \noindent For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j].up = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since it would only be necessary to iterate between two rankings when recalculating statistics, as evident in the formulas from Chapter 2. 
+\hfill \break \hfill \break
+Suppose we arbitrarily choose 2 points on a line uniformly. On average, the distance between these points would be a third of the length of the line. As such, it's expected that when iterating only between the old value which $i$ ranked $j$ and the new value that $i$ ranked $j$, the time complexity would be cut by two-thirds.
 By tracking adjacently ranked alters, this auxiliary structure allows us to make use of promotion statistics (discussed in Chapter 2) when recalculating metrics such as deference and nonconformity. In turn, this enables the network's proposals to be re-designed as more efficient small-step proposal moves, so that $\texttt{ergm.rank}$ can be reasonably applied to larger networks without egregious computational times.
 \section{Proposals}
 ERGMs use Markov chain Monte Carlo (MCMC) in order to generate possible networks from the model, as well as estimate the parameters by comparing simulated and observed statistics. This MCMC relies on proposals, which specify a mechanism for generating a small random change to the current network to explore the sample space.
@@ -428,7 +427,7 @@ Algorithm A1, however, is designed for sampling from a complete rank ERGM, which
 \hfill \break \hfill \break
 A complete rank ERGM assumes that each ego provides a strict ordering of all alters with no ties and no omissions. Consequently, in the case of a complete ordering, the distribution of the orderings is that of a permutation of alters by the egos. As such, the smallest move we can make in a complete ordering is have an ego swap an adjacent pair of alters. At present, the current \texttt{ergm.rank} infrastructure implementation only has the \texttt{AlterSwap} proposal, which is applicable solely to ERGMs with complete orderings, that picks two random alters ranked by an ego and proposes to swap them. 
 \hfill \break \hfill \break
-Comparatively, a partially ranked ERGM is encoded to account for ties and missing rankings when generating a proposal. This is accomplished by giving each alter a rating from 1 to $n - 1$, where $n$ is the number of actors in the network, so that the distribution instead is the egos assigning repeatable values in that range to alters. The two proposals designed for partially ranked ERGMs in this project are \texttt{AdjacentAlterSwap} and \texttt{PartialDisc}. For this thesis, we have elected to use \texttt{AdjacentAlterSwap} for the purposes of testing the proposed infrastructure and fitting partially ranked networks, but it is still worthwhile to distinguish between the two. As discussed in Section 3.1, the proposals will treat a partially ranked dataset as if it were completely ranked, effectively treating the missing data as censored rather than absent.
+Comparatively, a partially ranked ERGM is encoded to account for ties and missing rankings when generating a proposal. This is accomplished by giving each alter a rating from 1 to $n - 1$, where $n$ is the number of actors in the network, so that the distribution instead is the egos assigning repeatable values in that range to alters. The two proposals designed for partially ranked ERGMs in this project are \texttt{AdjacentAlterSwap} and \texttt{PartialDisc}. For this thesis, we have elected to use \texttt{AdjacentAlterSwap} for the purposes of testing the proposed infrastructure and fitting partially ranked networks, but it is still worthwhile to distinguish between the two. What most notably separates \texttt{PartialDisc} and \texttt{AdjacentAlterSwap} is that the former can be used without assuming the underlying model is a complete order network. However, as discussed in Section 3.1, we will treat a partially ranked dataset as if it were completely ranked, effectively treating the missing data as censored rather than absent, allowing us to use \texttt{AdjacentAlterSwap}.
 \hfill \break
 \subsection{PartialDisc}
 For \texttt{PartialDisc}, the smallest move we can make in a partial ordering is either incrementing or decrementing the rating of an alter by an ego. However, this implementation runs into a problem: what if we are currently looking at an alter rated $n - 1$ by an ego, or rated $1$? In that case, it would be impossible to increment up or down respectively. Consider a stationary distribution $p(y) 
@@ -453,7 +452,7 @@ This is similarly the case for the minimum, $y = 1$, and so in both cases we hav
 \subsection{AdjacentAlterSwap}
 Comparatively, the \texttt{AdjacentAlterSwap} proposal is similar to the \texttt{PartialDisc} proposal, with the main difference being that the former always proposes "up" using the new auxiliary structure, and simply abandons the proposal if it happens to pick a node already at the top. This case occurs with probability $1/(n - 1)$ of the time, which only slightly hurts the efficiency of the proposal. As such, there is no edge cases which \texttt{AdjacentAlterSwap} needs to account for when considering the log acceptance probability, making it much simpler for the purposes of testing the infrastructure and fitting partially ranked datasets for this project. 
 \hfill \break \hfill \break
-For future work, the \texttt{PartialDisc} proposal could be fully integrated into the R side of the package. Since the C implementation is already in place, this would allow us to evaluate its efficiency in practice and assess whether it provides advantages over \texttt{AdjacentAlterSwap}.
+For future work, the \texttt{PartialDisc} proposal could be fully integrated into the R side of the package, as it can also be used without the assumption that the underlying model is a complete order ranking. Since the C implementation is already in place, this would allow us to evaluate its efficiency in practice and assess whether it provides advantages over \texttt{AdjacentAlterSwap}.
 \chapter{Implementation and Evaluation using \texttt{ergm.rank}}
 Using the new auxiliary structure, we apply the framework to networks to benchmark computational time. We also evaluate whether the redesigned proposal mechanism produces accurate MLE estimates on partially observed networks, compared to MLE estimates obtained from the full network.
 \section{Dataset and Network Structure}
