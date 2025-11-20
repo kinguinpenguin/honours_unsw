@@ -3,7 +3,7 @@ library(ergm)
 library(ergm.rank)
 data(sampson)
 data(samplk)
-networks <- list(samplk1, samplk2, samplk3, sampdlk1, sampdlk2, sampdlk3)
+networks <- list(sampdlk1, sampdlk2, sampdlk3)
 complete_ordering <- function(nw, attrname, ref = as.matrix(nw, attrname = attrname)) { 
   diag(ref) <- NA
   r <- apply(ref, 1L, rank, ties.method = "random", na.last = "keep") |>
@@ -13,26 +13,28 @@ complete_ordering <- function(nw, attrname, ref = as.matrix(nw, attrname = attrn
   nw
 }
 fit_list <- list()
-for (i in 1:3) {
+for (i in 1:1) {
   cat(sprintf("Network %d\n", i))
   nw <- networks[[i]]
-  nw2 <- networks[[i + 3]]
-  constraint_mat <- as.matrix(nw, attrname = "score") + as.matrix(nw2, attrname = "score")
+  
   # Complete ranking network
-  nw_ranked <- complete_ordering(nw, "score", ref = constraint_mat)
+  nw_ranked <- complete_ordering(nw, "score")
+  
+  # Ranking matrix matches the completed network
+  rank_mat <- as.matrix(nw, attrname = "score")
   
   fit <- ergm(
     nw_ranked ~ rank.deference + rank.nonconformity("all") + rank.nonconformity("localAND"),
     response = "score",
     reference = ~CompleteOrder,
     constraints = ~ adjacent,
-    obs.constraints = ~ ranking(constraint_mat),
+    obs.constraints = ~ ranking(rank_mat),
     control = snctrl(init.method = "zeros")
   )
   
   fit_list[[i]] <- fit
 }
-output_file <- "tests/sampson/sampson_simulation.txt"
+output_file <- "tests/sampson/sampson_simulation_dislike.txt"
 
 # Open the file for writing
 sink(output_file)
@@ -57,9 +59,10 @@ library(ggplot2)
 
 compare_list <- list()
 
-### ---- LIKE NETWORKS (1,2,3) ---- ###
 
-for (i in 1:3) {
+### ---- DISLIKE NETWORKS (4,5,6) ---- ###
+
+for (i in 1:1) {
   if (inherits(fit_list[[i]], "ergm")) {
 
     coefs <- coef(fit_list[[i]])
@@ -67,7 +70,7 @@ for (i in 1:3) {
     logL  <- as.numeric(logLik(fit_list[[i]]))
 
     df_i <- data.frame(
-      week = i,                   
+      week = i,     # 1,2,3 for dislike
       term = names(coefs),
       estimate = coefs,
       se = ses,
@@ -77,19 +80,36 @@ for (i in 1:3) {
     compare_list[[i]] <- df_i
   }
 }
+for (i in 2:3) {
+  if (inherits(fit_list[[1]], "ergm")) {
+
+    coefs <- coef(fit_list[[1]])
+    ses   <- sqrt(diag(vcov(fit_list[[1]])))
+    logL  <- as.numeric(logLik(fit_list[[1]]))
+
+    df_i <- data.frame(
+      week = i,     # 1,2,3 for dislike
+      term = names(coefs),
+      estimate = 0,
+      se = 0,
+      logLik = 0
+    )
+
+    compare_list[[i]] <- df_i
+  }
+}
+
 
 ### ---- COMBINE ALL ---- ###
 
 compare_df <- do.call(rbind, compare_list)
 print(compare_df)
-capture.output(print(compare_df), file = "tests/sampson/sampson_simulation.txt")
 
-### ---- SPLIT INTO LIKE & DISLIKE ---- ###
+dislike_df <- do.call(rbind, compare_list[4:6])
+dislike_df$lower <- dislike_df$estimate - dislike_df$se
+dislike_df$upper <- dislike_df$estimate + dislike_df$se
+dislike_df$week  <- factor(dislike_df$week)
 
-like_df <- do.call(rbind, compare_list[1:3])
-like_df$lower <- like_df$estimate - like_df$se
-like_df$upper <- like_df$estimate + like_df$se
-like_df$week  <- factor(like_df$week)
 
 ### ---- FIXED PLOTTING FUNCTION (NO model_type) ---- ###
 
@@ -108,7 +128,6 @@ plot_estimates <- function(df, title) {
 }
 
 ### ---- GENERATE AND SAVE FIGURES ---- ###
-
-p_like <- plot_estimates(like_df, "Combined Liking/Disliking Relation Parameter Estimates")
-ggsave("tests/sampson/combined_statistics.png",
-       p_like, width = 10, height = 14, dpi = 300)
+p_dislike <- plot_estimates(dislike_df, "Disliking Relation Parameter Estimates")
+ggsave("tests/sampson/dislikeness_statistics.png",
+       p_dislike, width = 10, height = 14, dpi = 300)

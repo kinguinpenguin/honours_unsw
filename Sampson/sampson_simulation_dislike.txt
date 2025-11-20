@@ -1,0 +1,31 @@
+Sampson Simulation Results
+==========================
+
+Model 1 Results
+-----------------
+Call:
+ergm(formula = nw_ranked ~ rank.deference + rank.nonconformity("all") + 
+    rank.nonconformity("localAND"), response = "score", reference = ~CompleteOrder, 
+    constraints = ~adjacent, obs.constraints = ~ranking(rank_mat), 
+    control = snctrl(init.method = "zeros"))
+
+Monte Carlo Maximum Likelihood Results:
+
+                        Estimate Std. Error MCMC % z value Pr(>|z|)    
+deference              -0.349599   0.264301      0  -1.323  0.18593    
+nonconformity           0.009657   0.002990      0   3.230  0.00124 ** 
+nonconformity.localAND -0.037778   0.007087      0  -5.331  < 1e-04 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+     Null Deviance:   0.00  on  0  degrees of freedom
+ Residual Deviance: -26.97  on -3  degrees of freedom
+ 
+Note that the null model likelihood and deviance are defined to be 0.
+This means that all likelihood-based inference (LRT, Analysis of
+Deviance, AIC, BIC, etc.) is only valid between models with the same
+reference distribution and constraints.
+
+AIC: -20.97  BIC: -Inf  (Smaller is better. MC Std. Err. = 0.4819)
+
+

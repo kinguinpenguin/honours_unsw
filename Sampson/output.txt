@@ -1,0 +1,19 @@
+"John Bosco" "Gregory" "Basil" "Peter" "Bonaventure" "Berthold" "Mark" "Victor" "Ambrose" "Romauld" "Louis" "Winfrid" "Amand" "Hugh" "Boniface" "Albert" "Elias" "Simplicius"
+"John Bosco" 0 1 2 0 2 0 0 1 0 0 0 1 0 2 0 0 0 0
+"Gregory" 3 0 0 0 0 0 3 0 0 0 0 2 0 1 1 0 0 0
+"Basil" 3 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 3 2
+"Peter" 0 0 0 0 3 3 0 0 0 1 2 0 0 0 0 0 0 0
+"Bonaventure" 1 0 0 3 0 0 0 0 1 0 3 0 1 0 0 0 0 0
+"Berthold" 2 0 0 3 1 0 0 0 3 0 0 0 0 0 0 0 0 0
+"Mark" 1 3 0 0 0 0 0 1 0 0 0 1 0 0 0 3 0 0
+"Victor" 1 1 0 2 0 2 0 0 2 1 0 0 0 0 0 0 0 0
+"Ambrose" 0 0 0 0 3 0 0 3 0 0 0 2 0 0 0 1 0 0
+"Romauld" 0 0 0 3 2 0 0 1 1 0 0 0 2 1 0 0 0 0
+"Louis" 0 0 0 1 3 0 0 2 0 0 0 0 0 2 0 1 0 0
+"Winfrid" 3 3 0 0 0 0 1 0 0 0 0 0 0 2 0 0 0 0
+"Amand" 0 0 0 0 3 0 3 0 0 0 0 0 0 0 0 0 0 3
+"Hugh" 3 1 0 0 0 0 0 0 0 0 1 3 0 0 3 0 0 0
+"Boniface" 2 3 0 0 1 0 1 0 0 0 0 1 0 2 0 0 0 0
+"Albert" 1 3 0 0 0 0 3 0 0 0 0 1 0 0 1 0 0 0
+"Elias" 0 2 3 0 0 0 0 0 0 0 0 0 1 0 0 0 0 3
+"Simplicius" 1 3 1 0 0 0 1 0 0 0 0 0 1 0 0 0 2 0

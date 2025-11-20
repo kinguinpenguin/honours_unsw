@@ -15,43 +15,27 @@ complete_ordering <- function(nw, attrname, ref = as.matrix(nw, attrname = attrn
 fit_list <- list()
 for (i in 1:3) {
   cat(sprintf("Network %d\n", i))
-  nw <- networks[[i]]
-  nw2 <- networks[[i + 3]]
-  constraint_mat <- as.matrix(nw, attrname = "score") + as.matrix(nw2, attrname = "score")
-  # Complete ranking network
-  nw_ranked <- complete_ordering(nw, "score", ref = constraint_mat)
   
+  nw <- networks[[i]]
+  
+  # Complete ranking network used for MCMC proposals
+  nw_ranked <- complete_ordering(nw, "score")
+  
+  # Ranking matrix matches the original observed network (not completed)
+  rank_mat <- as.matrix(nw, attrname = "score")
+
   fit <- ergm(
     nw_ranked ~ rank.deference + rank.nonconformity("all") + rank.nonconformity("localAND"),
     response = "score",
     reference = ~CompleteOrder,
     constraints = ~ adjacent,
-    obs.constraints = ~ ranking(constraint_mat),
-    control = snctrl(init.method = "zeros")
+    obs.constraints = ~ ranking(rank_mat),
+    control = snctrl(init.method = "zeros",
+                    parallel = 4)
   )
   
   fit_list[[i]] <- fit
 }
-output_file <- "tests/sampson/sampson_simulation.txt"
-
-# Open the file for writing
-sink(output_file)
-
-cat("Sampson Simulation Results\n")
-cat("==========================\n\n")
-
-for (i in seq_along(fit_list)) {
-  cat(sprintf("Model %d Results\n", i))
-  cat("-----------------\n")
-  
-  # Print summary of the fit
-  print(summary(fit_list[[i]]))
-  
-  cat("\n\n")  # spacing between blocks
-}
-
-# Close the sink
-sink()
 
 library(ggplot2)
 
@@ -84,14 +68,18 @@ compare_df <- do.call(rbind, compare_list)
 print(compare_df)
 capture.output(print(compare_df), file = "tests/sampson/sampson_simulation.txt")
 
+end_time <- Sys.time()
+total_time <- as.numeric(difftime(end_time, start_time, units = "secs"))
+cat("\nTotal computational time:", round(total_time, 2), "seconds\n",
+    file = "tests/sampson/sampson_simulation.txt", append = TRUE)
+
+
 ### ---- SPLIT INTO LIKE & DISLIKE ---- ###
 
 like_df <- do.call(rbind, compare_list[1:3])
 like_df$lower <- like_df$estimate - like_df$se
 like_df$upper <- like_df$estimate + like_df$se
 like_df$week  <- factor(like_df$week)
-
-### ---- FIXED PLOTTING FUNCTION (NO model_type) ---- ###
 
 plot_estimates <- function(df, title) {
   ggplot(df, aes(x = week, y = estimate)) +
@@ -109,6 +97,6 @@ plot_estimates <- function(df, title) {
 
 ### ---- GENERATE AND SAVE FIGURES ---- ###
 
-p_like <- plot_estimates(like_df, "Combined Liking/Disliking Relation Parameter Estimates")
-ggsave("tests/sampson/combined_statistics.png",
+p_like <- plot_estimates(like_df, "Liking Relation Parameter Estimates")
+ggsave("tests/sampson/likeness_statistics.png",
        p_like, width = 10, height = 14, dpi = 300)
