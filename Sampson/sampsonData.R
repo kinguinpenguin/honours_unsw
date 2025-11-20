@@ -91,7 +91,7 @@ like_df$lower <- like_df$estimate - like_df$se
 like_df$upper <- like_df$estimate + like_df$se
 like_df$week  <- factor(like_df$week)
 
-### ---- FIXED PLOTTING FUNCTION (NO model_type) ---- ###
+### ---- PLOTTING FUNCTION ---- ###
 
 plot_estimates <- function(df, title) {
   ggplot(df, aes(x = week, y = estimate)) +
