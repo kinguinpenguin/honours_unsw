@@ -14,6 +14,8 @@
 \documentclass[honours,12pt]{unswthesis}
 \linespread{1}
 \usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
@@ -408,16 +410,13 @@ The proposed auxiliary structure for $\texttt{ergm.rank}$, called $\texttt{udsm}
 \includegraphics[width=0.5\textwidth]{Figures/struct_box_diagram up_down.jpg}
 \caption{A visual representation of the struct created for \texttt{udsm}.}
 \end{figure}
-\hfill \break
-For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j].up = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since it would only be necessary to iterate between two rankings when recalculating statistics, as evident in the formulas from Chapter 2. 
-\hfill \break \hfill \break
-Suppose we arbitrarily choose 2 points on a line uniformly. On average, the distance between these points would be a third of the length of the line. As such, it's expected that when iterating only between the old value which $i$ ranked $j$ and the new value that $i$ ranked $j$, the time complexity would be cut by two-thirds.
 \begin{figure}
 \centering
 \includegraphics[width=1\textwidth]{Figures/udsm.pdf}
 \caption{Consider an ego $i$ and their rankings of alters $a, b$ and $c.$ Then, if \texttt{sm[i][a]} were changed, using \texttt{udsm} we can start at the original value for \texttt{sm[i][a]} and iterate either up or down to the new value of \texttt{sm[i][a]}, allowing us to easily recalculate statistical measures without iterating over individuals who were not affected by the change. \texttt{udsm[i][a].down = 0} implies that there is no alter ranked by $i$ below $a$.}
-\end{figure}
-\hfill \break
+\end{figure} \noindent For example, for an ego $i$ and an alter $j$, $\texttt{udsm[i][j].up = k}$ means that the alter $k$ is the individual ranked immediately above $j$ by $i$. Then, it becomes more cost efficient to iterate over the network, since it would only be necessary to iterate between two rankings when recalculating statistics, as evident in the formulas from Chapter 2. 
+\hfill \break \hfill \break
+Suppose we arbitrarily choose 2 points on a line uniformly. On average, the distance between these points would be a third of the length of the line. As such, it's expected that when iterating only between the old value which $i$ ranked $j$ and the new value that $i$ ranked $j$, the time complexity would be cut by two-thirds.
 By tracking adjacently ranked alters, this auxiliary structure allows us to make use of promotion statistics (discussed in Chapter 2) when recalculating metrics such as deference and nonconformity. In turn, this enables the network's proposals to be re-designed as more efficient small-step proposal moves, so that $\texttt{ergm.rank}$ can be reasonably applied to larger networks without egregious computational times.
 \section{Proposals}
 ERGMs use Markov chain Monte Carlo (MCMC) in order to generate possible networks from the model, as well as estimate the parameters by comparing simulated and observed statistics. This MCMC relies on proposals, which specify a mechanism for generating a small random change to the current network to explore the sample space.
@@ -428,7 +427,7 @@ Algorithm A1, however, is designed for sampling from a complete rank ERGM, which
 \hfill \break \hfill \break
 A complete rank ERGM assumes that each ego provides a strict ordering of all alters with no ties and no omissions. Consequently, in the case of a complete ordering, the distribution of the orderings is that of a permutation of alters by the egos. As such, the smallest move we can make in a complete ordering is have an ego swap an adjacent pair of alters. At present, the current \texttt{ergm.rank} infrastructure implementation only has the \texttt{AlterSwap} proposal, which is applicable solely to ERGMs with complete orderings, that picks two random alters ranked by an ego and proposes to swap them. 
 \hfill \break \hfill \break
-Comparatively, a partially ranked ERGM is encoded to account for ties and missing rankings when generating a proposal. This is accomplished by giving each alter a rating from 1 to $n - 1$, where $n$ is the number of actors in the network, so that the distribution instead is the egos assigning repeatable values in that range to alters. The two proposals designed for partially ranked ERGMs in this project are \texttt{AdjacentAlterSwap} and \texttt{PartialDisc}. For this thesis, we have elected to use \texttt{AdjacentAlterSwap} for the purposes of testing the proposed infrastructure and fitting partially ranked networks, but it is still worthwhile to distinguish between the two. As discussed in Section 3.1, the proposals will treat a partially ranked dataset as if it were completely ranked, effectively treating the missing data as censored rather than absent.
+Comparatively, a partially ranked ERGM is encoded to account for ties and missing rankings when generating a proposal. This is accomplished by giving each alter a rating from 1 to $n - 1$, where $n$ is the number of actors in the network, so that the distribution instead is the egos assigning repeatable values in that range to alters. The two proposals designed for partially ranked ERGMs in this project are \texttt{AdjacentAlterSwap} and \texttt{PartialDisc}. For this thesis, we have elected to use \texttt{AdjacentAlterSwap} for the purposes of testing the proposed infrastructure and fitting partially ranked networks, but it is still worthwhile to distinguish between the two. What most notably separates \texttt{PartialDisc} and \texttt{AdjacentAlterSwap} is that the former can be used without assuming the underlying model is a complete order network. However, as discussed in Section 3.1, we will treat a partially ranked dataset as if it were completely ranked, effectively treating the missing data as censored rather than absent, allowing us to use \texttt{AdjacentAlterSwap}.
 \hfill \break
 \subsection{PartialDisc}
 For \texttt{PartialDisc}, the smallest move we can make in a partial ordering is either incrementing or decrementing the rating of an alter by an ego. However, this implementation runs into a problem: what if we are currently looking at an alter rated $n - 1$ by an ego, or rated $1$? In that case, it would be impossible to increment up or down respectively. Consider a stationary distribution $p(y) 
@@ -453,7 +452,7 @@ This is similarly the case for the minimum, $y = 1$, and so in both cases we hav
 \subsection{AdjacentAlterSwap}
 Comparatively, the \texttt{AdjacentAlterSwap} proposal is similar to the \texttt{PartialDisc} proposal, with the main difference being that the former always proposes "up" using the new auxiliary structure, and simply abandons the proposal if it happens to pick a node already at the top. This case occurs with probability $1/(n - 1)$ of the time, which only slightly hurts the efficiency of the proposal. As such, there is no edge cases which \texttt{AdjacentAlterSwap} needs to account for when considering the log acceptance probability, making it much simpler for the purposes of testing the infrastructure and fitting partially ranked datasets for this project. 
 \hfill \break \hfill \break
-For future work, the \texttt{PartialDisc} proposal could be fully integrated into the R side of the package. Since the C implementation is already in place, this would allow us to evaluate its efficiency in practice and assess whether it provides advantages over \texttt{AdjacentAlterSwap}.
+For future work, the \texttt{PartialDisc} proposal could be fully integrated into the R side of the package, as it can also be used without the assumption that the underlying model is a complete order ranking. Since the C implementation is already in place, this would allow us to evaluate its efficiency in practice and assess whether it provides advantages over \texttt{AdjacentAlterSwap}.
 \chapter{Implementation and Evaluation using \texttt{ergm.rank}}
 Using the new auxiliary structure, we apply the framework to networks to benchmark computational time. We also evaluate whether the redesigned proposal mechanism produces accurate MLE estimates on partially observed networks, compared to MLE estimates obtained from the full network.
 \section{Dataset and Network Structure}
@@ -473,30 +472,22 @@ The benchmarking process takes the Newcomb dataset and generates a modified vers
 For the missing data model, it is assumed that there exists a complete ordering beneath the observed partial ordering, so that the \texttt{AdjacentAlterSwap} proposal can be used. The fitted MLEs for each week are stored in an indexed list.
 \hfill \break
 \subsection{Evaluation Metrics}
-A set of utility functions are used to extract and compare key model statistics between the complete data and missing data fits. For each week, the script computes and stores:
-\hfill \break
-\begin{itemize}
-    \item[$\bullet$] Coefficients: $\texttt{(coef())}$
-    \item[$\bullet$] Standard errors: $\texttt{(sqrt(diag(vcov())))}$
-    \item[$\bullet$] Log-likelihood at the MLE: $\texttt{(logLik())}$
-\end{itemize}
-\vspace{0.5em}
+A set of utility functions are used to extract and compare key model statistics between the complete data and missing data fits. For each week, the script computes and stores coefficients, standard errors and log-likelihood at the MLE.
 \subsection{Timing and Output}
 The total runtime is computed and written to a file alongside model results. The scripts also generate visual comparisons of the evaluation metrics computed across the fifteen weeks, allowing for direct comparison between the results from the complete data MLE and missing data MLE.
 \hfill \break
 \section{Computational Results and Analysis of \citet{Newcomb1961-yh}}
 Having established the benchmarking framework and described the model-fitting procedure, we run the benchmarking scripts and obtain the evaluation metrics from the missing data and complete data MLEs, visually represented through the presented figures.
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{Benchmarks/coef_trajectories_stacked.png}
-\caption{Parameter estimates over time for deference, global nonconformity and local+global nonconformity, where error bars indicate $\pm$1 standard error. Note that Week 9 is missing as no rankings were recorded.}
-\end{figure}
-\hfill \break
 \subsection{Deference}
 For the \citep{Newcomb1961-yh} dataset, we see that parameter estimates of deference for both the constrained data MLE and the complete data MLE are negative throughout the entire fifteen weeks. This suggests that deference is disfavoured by the model, meaning the model would generate networks where deference is less prevalent compared to a network generated by ranking randomly. That is, there may not be a deferential structure, and instead a structure that results in a competitive tendency between individuals in the network. We also generally see that the parameter estimates for deference generally trends downwards as the weeks progress, implying the network strayed further from a deferential structure as time passed.
 \hfill \break \hfill \break
 The parameter estimates for the constrained model are within one standard error of those from the true model, indicating that little information was lost by restricting the data to the top five rankings. Interestingly, the constrained model yields more negative parameter estimates, suggesting that even less deference is captured by the top 5 rankings. That is, an individual's top choices appear to be driven less by deference and more by other factors such as personal preference or affinity.
 \newpage
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{Benchmarks/coef_trajectories_stacked.png}
+\caption{Parameter estimates over time for deference, global nonconformity and local+global nonconformity, where error bars indicate $\pm$1 standard error. Note that Week 9 is missing as no rankings were recorded.}
+\end{figure}
 \subsection{Global Nonconformity}
 The parameter estimates for global nonconformity under the complete data MLE generally stay close to 0 throughout the time period, indicating that the level of global nonconformity in networks generated from the fitted model is not noticeably different from that expected under a random baseline. Note that the most negative parameter estimate occurs in the first week, likely reflecting the influence of initial impressions formed before participants had established any friendships. In the context of the \citep{Newcomb1961-yh} dataset, these results imply that participants’ rankings of others evolved largely independently, without contradicting any general consensus that may have formed within the group. 
 \hfill \break \hfill \break
@@ -514,9 +505,10 @@ Interestingly, when we fit the MLE on a modified dataset that excludes the top-f
 \caption{Parameter estimates over time for local+global nonconformity, fitted on data where the top 5 rankings for each ego is missing.}
 \end{figure}
 \subsection{Time Efficiency of \texttt{AdjacentAlterSwap} compared to \texttt{AlterSwap}}
-It is also important to compare the computational performance of the two proposal mechanisms on complete orderings. Fitting an ERGM to the full \citet{Newcomb1961-yh} dataset for the key statistics of deference, global nonconformity, and combined local–global nonconformity using the current \texttt{ergm.rank} implementation with the \texttt{AlterSwap} proposal requires approximately 2229 seconds. In contrast, using the revised implementation, incorporating the new auxiliary structure together with the \texttt{AdjacentAlterSwap} proposal, reduces the total computation time to roughly 475 seconds. Interestingly, using \texttt{AlterSwap} but using the revised implementation for the calculations of the key statistics takes approximately 257 seconds. This indicates that \texttt{AlterSwap} could be inherently more efficient than \texttt{AdjacentAlterSwap}, although it is limited to complete rankings. 
+It is also important to compare the computational performance of the two proposal mechanisms on complete orderings. Fitting an ERGM to the full \citet{Newcomb1961-yh} dataset for the key statistics of deference, global nonconformity, and combined local–global nonconformity using the current \texttt{ergm.rank} implementation with the \texttt{AlterSwap} proposal requires approximately 2229 seconds. In contrast, using the revised implementation, incorporating the new auxiliary structure together with the \texttt{AdjacentAlterSwap} proposal, reduces the total computation time to roughly 475 seconds. Interestingly, using \texttt{AlterSwap} but using the revised implementation for the calculations of the key statistics takes approximately 257 seconds. However, these values were obtained using random initial values. When we set initial parameter estimates to 0, we actually obtained the times 293, 530, and 260 seconds respectively. This is likely because
+\texttt{AlterSwap} makes bigger proposals, which may make things better or worse for MCMLE, as a poor initial configuration can lead to slow convergence or outright failure \citep{Krivitsky2017-dw}. However, it is generally better to have a more informative starting point for the parameter estimates, rather than 0.
 \hfill \break \hfill \break
-This is possibly due to the fact that \texttt{AdjacentAlterSwap} performs additional lookups in the auxiliary structure and enforces constraint checks for each proposed toggle, whereas \texttt{AlterSwap} relies on simple random selection and minimal computation, making it inherently faster for complete orderings. Importantly, \texttt{AlterSwap} cannot be applied to partial orderings, as it assumes all rankings are well-defined, with no missing or tied entries. Nevertheless, these results demonstrate that our proposed implementation of the up-down auxiliary structure substantially improves computational efficiency. For future work, we could explore different model parameters or benchmark performance for a given sample size, and extract statistics to estimate the effective sample size per second of runtime.
+Nevertheless, these results demonstrate that our proposed implementation of the up-down auxiliary structure generally improve computational efficiency. For future work, we could explore different model parameters or benchmark performance for a given sample size, and extract statistics to estimate the effective sample size per second of runtime. We could also use a quick fit of the model as starting parameter estimates to compare how it affects computational time.
 \subsection{Robustness of the Proposal Method to Partial Rankings}
 Overall, the results from fitting MLEs to the \citet{Newcomb1961-yh} dataset show that little information is lost when restricting the data to partial rankings, as the parameter estimates remain close to those obtained from the complete rankings. These findings indicate that the proposed auxiliary structure, along with the modifications to the MCMC sampling algorithm, exhibits satisfactory robustness to missingness. These findings give confidence that the modified \texttt{ergm.rank} infrastructure can be applied to real-world datasets with genuine missing entries, while still yielding reliable and interpretable estimates. 
 \chapter{Applying \texttt{ergm.rank} to Incomplete Real-World Data}
@@ -526,20 +518,13 @@ The Sampson Monastery dataset \citep{Sa68n} is included in the \texttt{ergm} pac
 \hfill \break \hfill \break
 These three time points were in the period during which a new cohort had entered the monastery near the end of the study but before the major conflict began, which resulted in the expulsion of four monks. \citet{Sa68n} divided the novices into four groups: Young Turks, Loyal Opposition, Outcasts, and an interstitial group. The Loyal Opposition consists of the novices who entered the monastery first, and the Young Turks arrived later. The latter questioned practices in the monastery, which the former defended. The who novices did not take sides in this debate were labeled ``interstitial". The Outcasts are novices who were not accepted in any groups. 
 \hfill \break \hfill \break
-Each member of the monastery was asked to rank only his top three choices for both relations, with the rest of the rankings being unknown. Most of the data were collected retrospectively, after the conflict had occurred, which may reduce their reliability. In contrast, the general consensus is that the liking data was collected contemporaneously, making them the primary focus of this study. This is precisely the type of dataset that the previous implementation of \texttt{ergm.rank} was unable to accommodate for. With the updated infrastructure, we can now fit an MLE to the missing rankings, allowing us to learn about the underlying preference structure, which we previously could not. The main motivation of fitting on this dataset is to see whether the observed rankings from these relations could have provided early indications of this conflict. 
+Each member of the monastery was asked to rank only his top three choices for both relations, with the rest of the rankings being unknown. Most of the data were collected retrospectively, after the conflict had occurred, which may reduce their reliability \citep{sampson_monastery}. This is precisely the type of dataset that the previous implementation of \texttt{ergm.rank} was unable to accommodate for. With the updated infrastructure, we can now fit an MLE to the missing rankings, allowing us to learn about the underlying preference structure, which we previously could not. The main motivation of fitting on this dataset is to see whether the observed rankings from these relations could have provided early indications of this conflict. 
 \section{Implementation}
 Similarly to the \citet{Newcomb1961-yh} dataset, a script was written to use the auxiliary structure in the \texttt{ergm.rank} to extract parameter estimates from key model statistics.
 \subsection{Model Fitting}
 The script takes each of the six networks and fills in the missing rankings based on the observed values, producing an initial network with a complete ordering. It then estimates the model parameters (MLE) for each network using \texttt{AdjacentAlterSwap}, while constraining the fit to the rankings that were actually observed, storing the fitted MLEs for each network in a list. Currently, the initial parameter estimates are set to zero. A potential extension would be to first fit a model using starting values of zero, and then use the resulting parameter estimates as  starting points for a second fit. However, this dramatically increases computational time, as random or uninformed starting values generally leads to slower convergence and longer MCMC burn-in periods. As a result, this approach was not feasible within the constraints of this project.
 \subsection{Evaluation Metrics}
-The same utility functions from the benchmarking script were used to extract the key model statistics, computing and storing:
-\hfill \break
-\begin{itemize}
-    \item[$\bullet$] Coefficients: $\texttt{(coef())}$
-    \item[$\bullet$] Standard errors: $\texttt{(sqrt(diag(vcov())))}$
-    \item[$\bullet$] Log-likelihood at the MLE: $\texttt{(logLik())}$
-\end{itemize}
-\vspace{0.5em}
+The same utility functions from the benchmarking script were used to extract the key model statistics.
 \subsection{Output}
 The script generates visual comparisons of the evaluation metrics across the three time points for both the liking and disliking relations, allowing us to analyze how deference, global nonconformity, and local/global nonconformity changed over the study period.
 \section{Computational Results and Analysis of \citet{Sa68n}}
@@ -561,7 +546,7 @@ Evidently, The parameter estimates of the liking relation reflect the divide tha
 \subsection{Disliking Relation Analysis}
 Unfortunately, attempts to fit ERGMs to the three disliking networks (\texttt{sampdlk1}, \texttt{sampdlk2}, \texttt{sampdlk3}) were less successful. While \texttt{sampdlk1} converged to a reasonable MLE, \texttt{sampdlk2} and \texttt{sampdlk3} had extremely long run times and did not reach convergence within feasible computational limits. This issue underscores the challenges faced when fitting MLEs to sparse partial rankings. When so little information is available, parameter estimation is unstable and is prohibitively slow to converge. 
 \hfill \break \hfill \break
-Since the disliking relations were collected retrospectively, after the conflict had already unfolded, it is likely that these rankings were less reliable compared to the liking data. Retrospective recall, especially for negative relations, tends to introduce noise, resulting in less coherent structural patterns for the ERGMs to capture. As a result, the ERGMs for disliking relations lacked consistent structural patterns for parameter estimation, yielding a poorly defined likelihood and preventing the algorithm from converging to an MLE. Future works could look into improving the infrastructure to successfully fit these datasets, or simply more powerful hardware to reduce run times. We can, however, examine the results from fitting \texttt{sampdlk1} and compare them to the corresponding liking network at the same time point, \texttt{samplk1}.
+Since the disliking relations were collected retrospectively \citep{sampson_monastery}, after the conflict had already unfolded, it is likely that these rankings were less reliable compared to the liking data. Retrospective recall, especially for negative relations, tends to introduce noise, resulting in less coherent structural patterns for the ERGMs to capture. As a result, the ERGMs for disliking relations lacked consistent structural patterns for parameter estimation, yielding a poorly defined likelihood and preventing the algorithm from converging to an MLE. Future works could look into improving the infrastructure to successfully fit these datasets, or simply more powerful hardware to reduce run times. We can, however, examine the results from fitting \texttt{sampdlk1} and compare them to the corresponding liking network at the same time point, \texttt{samplk1}.
 \hfill \break
 \begin{figure}
 \centering
@@ -595,7 +580,7 @@ Overall, we can say with confidence that the parameter estimates obtained by fit
 \hfill \break \hfill \break
 While the models fitted using only the observed top rankings produced reasonable and interpretable estimates, incorporating both the top and bottom rankings as constraints provided substantially more information for the MCMC algorithm, resulting in parameter estimates that more clearly reflected the underlying community structure at the monastery.
 \hfill \break \hfill \break
-Although most of the disliking networks alone did not converge, this is not surprising given the sparsity and unreliability of retrospective negative rankings. However, they were still useful in that their combination with the liking data yielded constraints that were far more informative, ultimately producing better parameter estimates.
+Although most of the disliking networks alone did not converge, this is not surprising given the sparsity and unreliability of negative rankings. However, they were still useful in that their combination with the liking data yielded constraints that were far more informative, ultimately producing better parameter estimates.
 \chapter{Discussion and Future Work}
 Overall, the implementation of the modified \texttt{ergm.rank} in this thesis successfully demonstrated the ability to fix maximum likelihood estimates (MLEs) to partially ranked network data.
 \section{\citet{Newcomb1961-yh} Fraternity Data Insights}
